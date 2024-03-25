@@ -4,8 +4,9 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
 
-        ClaimProcessManagerImpl service = new ClaimProcessManagerImpl();
+//        ClaimProcessManagerImpl service = new ClaimProcessManagerImpl();
         CustomerManagerImpl CService = new CustomerManagerImpl();
+        InsuranceCardMagagerImpl IService = new InsuranceCardMagagerImpl();
 
         Scanner scan = new Scanner(System.in);
 
@@ -26,19 +27,19 @@ public class Main {
                     break;
 
                 case 2:
-                    service.update();
+                    IService.getMenu();
                     break;
 
                 case 3:
-                    service.getMenu();
+//                    service.getMenu();
                     break;
 
                 case 4:
-                    service.getOne();
+//                    service.getOne();
                     break;
 
                 case 5:
-                    service.getAll();
+//                    service.getAll();
                     break;
 
                 case 6:
