@@ -42,8 +42,7 @@ public class CustomerManagerImpl implements CustomerManager {
         list.add(cus);
 
         // 직렬화
-        serializeCustomer(cus);
-
+        serializeObject(cus, "customer/" + cus.getId() + ".txt");
         System.out.println(fullName + "회원이 등록되었습니다.");
 
         
@@ -139,7 +138,7 @@ public class CustomerManagerImpl implements CustomerManager {
                             break;
 
                     }
-                    serializeCustomer(cus);
+                    serializeObject(cus, "customer/" + cus.getId() + ".txt");
                     System.out.println(id + "님의 개인정보가 성공적으로 수정되었습니다.");
                     System.out.println(id + "님의 개인정보를 수정하였습니다.");
                     return;
@@ -258,19 +257,12 @@ public class CustomerManagerImpl implements CustomerManager {
         return customers;
     }
 
-    public static void serializeCustomer(Customer cus) {
-        String directoryPath = "customer";
-        File directory = new File(directoryPath);
-        if (!directory.exists()) {
-            directory.mkdirs(); // 디렉토리 생성
-        }
-
-        String filename = directoryPath + "/" + cus.getId() + ".txt";
-        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filename))) {
-            outputStream.writeObject(cus);
-            System.out.println("Customer data saved to " + filename);
+    public static void serializeObject(Object obj, String filePath) {
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            outputStream.writeObject(obj);
+            System.out.println(obj.getClass().getSimpleName() + " data saved to " + filePath);
         } catch (IOException e) {
-            System.out.println("Error occurred while saving customer data to file.");
+            System.out.println("Error occurred while saving data to file: " + filePath);
             e.printStackTrace();
         }
     }

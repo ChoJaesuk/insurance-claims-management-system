@@ -1,33 +1,40 @@
 package src;
 
+import java.io.*;
+import java.time.LocalDate;
 import java.util.*;
 
-public class Claim {
+
+public class Claim implements Serializable {
 
     private String id;
-    private Date claimDate;
-    private String insuredPerson;
+    private LocalDate claimDate;
+    private String insuredPersonId;
+    private String insuredPersonFullName;
     private int cardNumber;
-    private Date examDate;
+    private LocalDate examDate;
     private List<String> documents;
     private double claimAmount;
     private String status;
     private String receiverBankingInfo;
 
+    private InsuranceCard insuranceCard;
+
+    private Customer customer;
+
     public Claim() {
 
     }
-    public Claim(String id, Date claimDate, String insuredPerson, int cardNumber, Date examDate, List<String> documents, double claimAmount, String status, String receiverBankingInfo) {
-        this.id = id;
+    public Claim(String claimId, String customerId, String customerFullName, InsuranceCard cardNumber ,LocalDate claimDate, LocalDate examDate, double claimAmount) {
+        this.id = claimId;
         this.claimDate = claimDate;
-        this.insuredPerson = insuredPerson;
-        this.cardNumber = cardNumber;
+        this.insuredPersonId = customerId;
+        this.insuranceCard = cardNumber;
+        this.insuredPersonFullName = customerFullName;
         this.examDate = examDate;
-        this.documents = documents;
         this.claimAmount = claimAmount;
-        this.status = status;
-        this.receiverBankingInfo = receiverBankingInfo;
     }
+
 
     public String getId() {
         return id;
@@ -38,18 +45,18 @@ public class Claim {
     }
 
     public String getInsuredPerson() {
-        return insuredPerson;
+        return insuredPersonId;
     }
 
     public void setInsuredPerson(String insuredPerson) {
-        this.insuredPerson = insuredPerson;
+        this.insuredPersonId = insuredPerson;
     }
 
-    public Date getExamDate() {
+    public LocalDate getExamDate() {
         return examDate;
     }
 
-    public void setExamDate(Date examDate) {
+    public void setExamDate(LocalDate examDate) {
         this.examDate = examDate;
     }
 
@@ -69,11 +76,11 @@ public class Claim {
         this.status = status;
     }
 
-    public Date getClaimDate() {
+    public LocalDate getClaimDate() {
         return claimDate;
     }
 
-    public void setClaimDate(Date claimDate) {
+    public void setClaimDate(LocalDate claimDate) {
         this.claimDate = claimDate;
     }
 
@@ -99,6 +106,28 @@ public class Claim {
 
     public void setReceiverBankingInfo(String receiverBankingInfo) {
         this.receiverBankingInfo = receiverBankingInfo;
+    }
+
+    public String getInsuredPersonFullName() {
+        return insuredPersonFullName;
+    }
+
+    public void setInsuredPersonFullName(String InsuredPersonFullName) {
+        this.insuredPersonFullName = insuredPersonFullName;
+    }
+
+    @Override
+    public String toString() {
+        String cardNumber = (insuranceCard != null) ? insuranceCard.getCardNumber() : "N/A";
+        return "Claim{" +
+                "CLAIM ID='" + id + '\'' +
+                "CUSTOMER ID='" + insuredPersonId + '\'' +
+                ", NAME='" + insuredPersonFullName + '\'' +
+                ", INSURANCE CARD NUMBER=" + cardNumber+
+                ", CLAIM DATE=" + claimDate +
+                ", EXAM DATE=" + examDate +
+                ", CLAIM AMOUNT=" + claimAmount +
+                '}';
     }
 }
 

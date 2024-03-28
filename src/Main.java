@@ -4,7 +4,7 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
 
-//        ClaimProcessManagerImpl service = new ClaimProcessManagerImpl();
+        ClaimProcessManagerImpl service = new ClaimProcessManagerImpl();
         CustomerManagerImpl CService = new CustomerManagerImpl();
         InsuranceCardMagagerImpl IService = new InsuranceCardMagagerImpl();
 
@@ -31,7 +31,7 @@ public class Main {
                     break;
 
                 case 3:
-//                    service.getMenu();
+                    service.getMenu();
                     break;
 
                 case 4:

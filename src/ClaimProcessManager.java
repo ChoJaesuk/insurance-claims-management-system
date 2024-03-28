@@ -1,11 +1,17 @@
 package src;
 
-import java.util.*;
 public interface ClaimProcessManager {
 
-    void add();
+    void addClaim();
     void update();
     void delete();
+
+    void getOne();
+
+
+
+    void getAllClaim();
+
     void getMenu();
 
 
