@@ -2,20 +2,21 @@ package src;
 
 import java.io.Serializable;
 import java.util.*;
+import java.time.LocalDate;
 
 public class InsuranceCard implements Serializable {
-
+    private static final long serialVersionUID = 1L;
     private String cardNumber;
     private String cardHolder;
     private String policyOwner;
-    private Date expirationDate;
+    private LocalDate expirationDate;
 
     // 생성자
     public InsuranceCard(String cardNumber) {
         this.cardNumber = cardNumber;
     }
 
-    public void setCardInfo(String cardHolder, String policyOwner, Date expirationDate) {
+    public void setCardInfo(String cardHolder, String policyOwner, LocalDate expirationDate) {
         this.cardHolder = cardHolder;
         this.policyOwner = policyOwner;
         this.expirationDate = expirationDate;
@@ -38,9 +39,14 @@ public class InsuranceCard implements Serializable {
     }
 
 
-    public Date getExpirationDate() {
+    public LocalDate getExpirationDate() {
         return expirationDate;
     }
-
+    @Override
+    public String toString() {
+        return "InsuranceCard{" +
+                "cardNumber='" + cardNumber + '\'' +
+                '}';
+    }
 
 }
