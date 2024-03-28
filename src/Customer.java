@@ -1,35 +1,51 @@
 package src;
 
+import java.io.*;
 import java.util.*;
-public class Customer {
-
+import java.time.LocalDate;
+public class Customer implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String id;
     private String fullName;
-    private String insuranceCard;
+    private InsuranceCard insuranceCard;
+    private boolean isPolicyHolder;
     private List<Customer> dependents;
     private List<Claim> claims;
+
+    private String policyOwner;
+    private LocalDate expirationDate;
 
     public Customer() {
 
     }
 
-    public Customer(String id, String fullName, String insuranceCard, List<Customer>dependents, List<Claim> claims) {
+//    public Customer(String id, String fullName, boolean isPolicyHolder, String policyOwner) {
+//        this.id = id;
+//        this.fullName = fullName;
+//        this.isPolicyHolder = isPolicyHolder;
+//        this.policyOwner = policyOwner;
+//    }
+
+
+    public Customer(String id, String fullName, boolean isPolicyHolder, String policyOwner, LocalDate expirationDate, InsuranceCard insuranceCard) {
         this.id = id;
         this.fullName = fullName;
+        this.isPolicyHolder = isPolicyHolder;
+        this.policyOwner = policyOwner;
         this.insuranceCard = insuranceCard;
-        this.claims = claims;
-        this.dependents = dependents;
+        this.expirationDate = expirationDate;
+
+
     }
 
-    public Customer(String id, String fullName, String insuranceCard, String dependents, String claims) {
-        this.id = id;
-        this.fullName = fullName;
-        this.insuranceCard = insuranceCard;
-        this.dependents = new ArrayList<>();
-        this.claims = new ArrayList<>();
+    public void setPolicyOwner(String policyOwner) {
+        this.policyOwner = policyOwner;
     }
-
-
+    public String getPolicyOwner() { return policyOwner; }
+    public void setIsPolicyHolder(boolean isPolicyHolder) {
+        this.isPolicyHolder = isPolicyHolder;
+    }
+    public boolean getIsPolicyHolder() { return isPolicyHolder; }
     public String getId() {
         return id;
     }
@@ -42,12 +58,31 @@ public class Customer {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
-    public String getInsuranceCard() {
-        return insuranceCard;
-    }
-    public void setInsuranceCard(String insuranceCard) {
+    public void setInsuranceCard(InsuranceCard insuranceCard) {
         this.insuranceCard = insuranceCard;
     }
+
+    public void setExpirationDate() {
+        this.expirationDate = expirationDate;
+
+    }
+
+    public LocalDate getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setPolicyOwner() {
+        this.policyOwner = policyOwner;
+    }
+    public String getPolicyOwner(String policyOwner) { return policyOwner; }
+    public InsuranceCard getInsuranceCard() {
+        return insuranceCard;
+    }
+    public void createInsuranceCard(String cardNumber, String cardHolder, String policyOwner, LocalDate expirationDate) {
+        this.insuranceCard = new InsuranceCard(cardNumber);
+        this.insuranceCard.setCardInfo(cardHolder, policyOwner, expirationDate);
+    }
+
     public List<Claim> getClaims() {
         return claims;
     }
@@ -60,5 +95,23 @@ public class Customer {
     public void setDependents(List<Customer> dependents) {
         this.dependents = dependents;
     }
+
+    @Override
+    public String toString() {
+        String cardNumber = (insuranceCard != null) ? insuranceCard.getCardNumber() : "N/A";
+        return "Customer{" +
+                "ID='" + id + '\'' +
+                ", NAME='" + fullName + '\'' +
+                ", POLICY HOLDER=" + isPolicyHolder +
+                ", POLICY OWNER=" + policyOwner +
+                ", INSURANCE CARD NUMBER=" + cardNumber+
+                ", expirationDate=" + expirationDate +
+                '}';
+    }
+
+
+
+
+
 
 }

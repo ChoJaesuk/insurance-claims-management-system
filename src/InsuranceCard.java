@@ -1,53 +1,52 @@
 package src;
 
+import java.io.Serializable;
 import java.util.*;
+import java.time.LocalDate;
 
-public class InsuranceCard {
-
-    private int cardNumber;
+public class InsuranceCard implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String cardNumber;
     private String cardHolder;
     private String policyOwner;
-    private Date expirationDate;
+    private LocalDate expirationDate;
 
-    public InsuranceCard() {
+    // 생성자
+    public InsuranceCard(String cardNumber) {
+        this.cardNumber = cardNumber;
     }
 
-    public InsuranceCard(int cardNumber, String cardHolder, String policyOwner, Date expirationDate) {
-        this.cardNumber = cardNumber;
+    public void setCardInfo(String cardHolder, String policyOwner, LocalDate expirationDate) {
         this.cardHolder = cardHolder;
         this.policyOwner = policyOwner;
         this.expirationDate = expirationDate;
     }
 
-    public int getCardNumber() {
+
+
+    public String getCardNumber() {
         return cardNumber;
     }
 
-    public void setCardNumber(int cardNumber) {
-        this.cardNumber = cardNumber;
-    }
 
     public String getCardHolder() {
         return cardHolder;
     }
 
-    public void setCardHolder(String cardHolder) {
-        this.cardHolder = cardHolder;
-    }
 
     public String getPolicyOwner() {
         return policyOwner;
     }
 
-    public void setPolicyOwner(String policyOwner) {
-        this.policyOwner = policyOwner;
-    }
 
-    public Date getExpirationDate() {
+    public LocalDate getExpirationDate() {
         return expirationDate;
     }
-
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
+    @Override
+    public String toString() {
+        return "InsuranceCard{" +
+                "cardNumber='" + cardNumber + '\'' +
+                '}';
     }
+
 }
