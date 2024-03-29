@@ -6,9 +6,9 @@ import java.util.*;
 
 public class CustomerManagerImpl implements CustomerManager {
     private static List<Customer> list = new ArrayList<>();
+    private static List<Dependent> dependentsList = new ArrayList<>();
     private Scanner scan = new Scanner(System.in);
-    private Customer customer;
-    private InsuranceCard insuranceCard;
+
 
 
     @Override
@@ -42,10 +42,10 @@ public class CustomerManagerImpl implements CustomerManager {
         list.add(cus);
 
         // 직렬화
-        serializeObject(cus, "customer/" + cus.getId() + ".txt");
+        serializeObject(cus, "customer/policyHolder/" + cus.getId() + ".txt");
         System.out.println(fullName + "회원이 등록되었습니다.");
 
-        
+
     }
 
 
@@ -69,7 +69,6 @@ public class CustomerManagerImpl implements CustomerManager {
 
     @Override
     public void updateCustomer() {
-        // 이름을 입력받아 해당 회원의 나이와 전화번호 수정하기
         List<Customer> customers = deserializeCustomers();
         System.out.println("수정할 회원의 이름을 입력하세요.");
         String id = scan.next();
@@ -81,8 +80,8 @@ public class CustomerManagerImpl implements CustomerManager {
                 while(true) {
                     Scanner scan = new Scanner(System.in);
                     System.out.println("무엇을 수정하시겠어요?");
-                    System.out.println("## [1]아이디 [2]이름 [4]dependents 추가");
-                    System.out.println("## [5]policyHolder [6]유효기간 수정 [7]취소");
+                    System.out.println("## [1]아이디 [2]이름 [3]policyHolder");
+                    System.out.println("## [4]유효기간 수정 [5]취소");
                     int number = scan.nextInt();
 
                     switch (number) {
@@ -115,30 +114,16 @@ public class CustomerManagerImpl implements CustomerManager {
                             cus.setFullName(newFullName);
                             break;
 
-//                        case 3:
-//                            System.out.println("수정할 카드번호 : ");
-//                            String newInsuranceNumber = scan.next();
-//                            customer.setInsuranceCard(newInsuranceNumber);
-//                            break;
-//
-//                        case 4:
-//                            System.out.println("수정할 dependents : ");
-//                            String newDependents = scan.next();
-//                            customer.setInsuranceCard(newDependents);
-//                            break;
-//
-//                        case 5:
-//                            System.out.println("수정할 claims : ");
-//                            String newClaims = scan.next();
-//                            customer.setInsuranceCard(newClaims);
-//                            break;
+                        case 3:
+                            addDependent();
+                            break;
 
                         case 6:
                             System.out.println("취소");
                             break;
 
                     }
-                    serializeObject(cus, "customer/" + cus.getId() + ".txt");
+                    serializeObject(cus, "customer/policyHolder/" + cus.getId() + ".txt");
                     System.out.println(id + "님의 개인정보가 성공적으로 수정되었습니다.");
                     System.out.println(id + "님의 개인정보를 수정하였습니다.");
                     return;
@@ -218,36 +203,109 @@ public class CustomerManagerImpl implements CustomerManager {
             }
         }
     }
-
+//    public void addDependent(Dependent dependent) {
+//        dependents.add(dependent);
+//    }
+//
+//    public void removeDependent(Dependent dependent) {
+//        dependents.remove(dependent);
+//    }
     @Override
-    public void addDependents() {
+    public void addDependent() {
+        List<Customer> customers = deserializeCustomers();
+        System.out.println("수정할 회원의 이름을 입력하세요.");
+        String id = scan.next();
 
+        for (int i = 0; i < customers.size(); i++) {
+            Customer cus = customers.get(i);
+
+            if (cus.getId().equals(id)) {
+
+                System.out.println("dependent의 아이디를 입력해주세요");
+                String dependentId = scan.next();
+
+                System.out.println("dependent의 이름을 입력해주세요");
+                String dependentFullName = scan.next();
+
+                System.out.println("당신은 Policy Holder인가요?");
+                boolean answer = scan.nextBoolean();
+
+                LocalDate expirationDate = cus.getExpirationDate();
+                String policyOwner = cus.getPolicyOwner();
+                String cardNumber = generateRandomCardNumber();
+                InsuranceCard insuranceCard = new InsuranceCard(cardNumber);
+
+                cus.setDependentsInfo(id, policyOwner, expirationDate);
+
+                // 고객 객체 생성
+                Dependent dependent2 = new Dependent(dependentId, dependentFullName, id, insuranceCard, answer, policyOwner, expirationDate);
+
+                // 고객 리스트에 추가
+                dependentsList.add(dependent2);
+
+                // 직렬화
+                serializeObject(dependent2, "customer/dependent/" + dependentId + ".txt");
+                System.out.println(dependentFullName + "회원이 등록되었습니다.");
+
+            }
+            else {
+                System.out.println("저희 시스템에 등록되지 않은 id입니다.");
+            }
+        }
+    }
+
+
+    // 고객을 ID로 찾는 메소드
+    private Customer findCustomerById(String customerId) {
+        List<Customer> customers = deserializeCustomers(); // deserializeCustomers()는 해당 메소드에 맞게 구현되어야 함
+        for (Customer customer : customers) {
+            if (customer.getId().equals(customerId)) {
+                return customer;
+            }
+        }
+        return null;
     }
 
     public static List<Customer> deserializeCustomers() {
         List<Customer> customers = new ArrayList<>();
 
         try {
-            File directory = new File("customer");
-            if (!directory.exists() || !directory.isDirectory()) {
-                System.out.println("No customer data found.");
-                return customers;
-            }
-
-            File[] files = directory.listFiles();
-            if (files == null || files.length == 0) {
-                System.out.println("No customer data found.");
-                return customers;
-            }
-
-            for (File file : files) {
-                try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
-                    Customer customer = (Customer) inputStream.readObject();
-                    customers.add(customer);
-                } catch (IOException | ClassNotFoundException e) {
-                    System.out.println("Error occurred while reading customer data from file: " + file.getName());
-                    e.printStackTrace();
+            // PolicyHolder 디렉토리
+            File policyHolderDirectory = new File("customer/PolicyHolder");
+            if (policyHolderDirectory.exists() && policyHolderDirectory.isDirectory()) {
+                File[] policyHolderFiles = policyHolderDirectory.listFiles();
+                if (policyHolderFiles != null) {
+                    for (File file : policyHolderFiles) {
+                        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
+                            Customer policyHolder = (Customer) inputStream.readObject();
+                            customers.add(policyHolder);
+                        } catch (IOException | ClassNotFoundException e) {
+                            System.out.println("Error occurred while reading PolicyHolder data from file: " + file.getName());
+                            e.printStackTrace();
+                        }
+                    }
                 }
+            } else {
+                System.out.println("No PolicyHolder data found.");
+            }
+
+            // Dependent 디렉토리
+            File dependentDirectory = new File("customer/Dependent");
+            if (dependentDirectory.exists() && dependentDirectory.isDirectory()) {
+                File[] dependentFiles = dependentDirectory.listFiles();
+                if (dependentFiles != null) {
+                    for (File file : dependentFiles) {
+                        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
+                            Dependent dependent = (Dependent) inputStream.readObject();
+                            customers.add(dependent);
+                        } catch (IOException | ClassNotFoundException e) {
+                            System.out.println("Error occurred while reading Dependent data from file: " + file.getName());
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } else {
+                System.out.println("No Dependent data found.");
             }
         } catch (Exception e) {
             System.out.println("Error occurred during deserialization.");
@@ -257,6 +315,7 @@ public class CustomerManagerImpl implements CustomerManager {
         return customers;
     }
 
+
     public static void serializeObject(Object obj, String filePath) {
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
             outputStream.writeObject(obj);
@@ -264,54 +323,6 @@ public class CustomerManagerImpl implements CustomerManager {
         } catch (IOException e) {
             System.out.println("Error occurred while saving data to file: " + filePath);
             e.printStackTrace();
-        }
-    }
-    @Override
-    public void getMenu() {
-        CustomerManager Cservice = new CustomerManagerImpl();
-
-        Scanner scan = new Scanner(System.in);
-
-        while (true) {
-            System.out.println();
-            System.out.println("###### 회원 관리 프로그램 ######");
-            System.out.println("## [1]고객추가 [2]고객수정 [3]고객삭제 ##");
-            System.out.println("## [4]고객 아이디로 검색 [5]모든 고객 불러오기 [6]프로그램종료 ##");
-            System.out.println("##########################");
-
-            System.out.println(" 메뉴 입력 : ");
-            int choice = scan.nextInt();
-
-            switch (choice) {
-
-                case 1:
-                    Cservice.addCustomer();
-                    break;
-
-                case 2:
-                    Cservice.updateCustomer();
-                    break;
-
-                case 3:
-                    Cservice.deleteCustomer();
-                    break;
-
-                case 4:
-                    Cservice.getCustomerById();
-                    break;
-
-                case 5:
-                    Cservice.getAllCustomers();
-                    break;
-
-                case 6:
-                    System.out.println("프로그램 종료합니다.");
-                    System.exit(0);    // 프로그램 강제종료
-
-                default:
-                    System.out.println("잘못입력 하셨습니다.");
-
-            }
         }
     }
 

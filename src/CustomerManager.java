@@ -1,7 +1,10 @@
 package src;
 
 public interface CustomerManager {
+//    void addCustomer();
+
     void addCustomer();
+
     void updateCustomer();
 
     void deleteCustomer();
@@ -10,7 +13,6 @@ public interface CustomerManager {
 
     void getAllCustomers();
 
-    void addDependents();
-    void getMenu();
 
+    void addDependent();
 }

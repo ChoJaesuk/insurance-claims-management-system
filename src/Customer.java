@@ -9,9 +9,8 @@ public class Customer implements Serializable {
     private String fullName;
     private InsuranceCard insuranceCard;
     private boolean isPolicyHolder;
-    private List<Customer> dependents;
     private List<Claim> claims;
-
+//    private List<Dependents> dependents;
     private String policyOwner;
     private LocalDate expirationDate;
 
@@ -28,6 +27,7 @@ public class Customer implements Serializable {
 
 
     public Customer(String id, String fullName, boolean isPolicyHolder, String policyOwner, LocalDate expirationDate, InsuranceCard insuranceCard) {
+
         this.id = id;
         this.fullName = fullName;
         this.isPolicyHolder = isPolicyHolder;
@@ -35,7 +35,19 @@ public class Customer implements Serializable {
         this.insuranceCard = insuranceCard;
         this.expirationDate = expirationDate;
 
+    }
 
+//    public Customer(String dependentId, String dependentFullName, boolean isPolicyHolder) {
+//        this.dependentId = dependentId;
+//        this.dependentFullName = dependentFullName;
+//        this.isPolicyHolder = isPolicyHolder;
+////        this.insuranceCard = insuranceCard;
+//    }
+
+    public void setDependentsInfo(String id, String policyOwner, LocalDate expirationDate) {
+        this.id = id;
+        this.policyOwner = policyOwner;
+        this.expirationDate = expirationDate;
     }
 
     public void setPolicyOwner(String policyOwner) {
@@ -89,12 +101,29 @@ public class Customer implements Serializable {
     public void setClaims(List<Claim> claims) {
         this.claims = claims;
     }
-    public List<Customer> getDependents() {
-        return dependents;
-    }
-    public void setDependents(List<Customer> dependents) {
-        this.dependents = dependents;
-    }
+//    public List<Customer> getDependents() {
+//        return dependents;
+//    }
+//    public void setDependents(List<Customer> dependents) {
+//        this.dependents = dependents;
+//    }
+
+//    public void setDependentId(String dependentId) {
+//        this.dependentId = dependentId;
+//    }
+//
+//
+//    public String getDependentId() {
+//        return dependentId;
+//    }
+//
+//    public void setDependentFullName(String dependentFullName) {
+//        this.dependentFullName = dependentFullName;
+//    }
+//
+//    public String getDependentFullName() {
+//        return dependentFullName;
+//    }
 
     @Override
     public String toString() {
@@ -106,8 +135,11 @@ public class Customer implements Serializable {
                 ", POLICY OWNER=" + policyOwner +
                 ", INSURANCE CARD NUMBER=" + cardNumber+
                 ", expirationDate=" + expirationDate +
+                ", LIST OF CLAIMS=" +  claims +
                 '}';
     }
+
+
 
 
 
