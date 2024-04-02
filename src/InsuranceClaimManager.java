@@ -61,7 +61,8 @@ public class InsuranceClaimManager {
                 System.out.println();
                 System.out.println("###### 회원 관리 프로그램 ######");
                 System.out.println("## [1]고객추가 [2]고객수정 [3]고객삭제 ##");
-                System.out.println("## [4]고객 아이디로 검색 [5]모든 고객 불러오기 [6]dependent 추가 [7]종료 ##");
+                System.out.println("## [4]고객 아이디로 검색 [5]모든 고객 불러오기 [6]dependent 불러오기 [7]종료 ##");
+                System.out.println("## [7]dependent 삭제 [2]고객수정 [3]고객삭제 ##");
                 System.out.println("##########################");
 
                 System.out.println(" 메뉴 입력 : ");
@@ -90,9 +91,14 @@ public class InsuranceClaimManager {
                         break;
 
                     case 6:
-                        customerManager.addDependent();
+                        customerManager.getAllDependents();
+                        break;
 
                     case 7:
+
+
+
+                    case 9:
                         System.out.println("프로그램 종료합니다.");
                         System.exit(0);    // 프로그램 강제종료
 
@@ -110,7 +116,8 @@ public class InsuranceClaimManager {
             System.out.println();
             System.out.println("###### 회원 관리 프로그램 ######");
             System.out.println("## [1]청구 추가 [2]청구 수정 [3]청구 삭제 ##");
-            System.out.println("## [4]청구 하나 가져오기 [5]청구 다 가져오기 [6]프로그램종료 ##");
+            System.out.println("## [4]청구 하나 가져오기 [5]청구 다 가져오기 [6]파일 생성하기위한 작업 ##");
+            System.out.println("## [7]파일 리스트 [8] [3]##");
             System.out.println("##########################");
 
             System.out.println(" 메뉴 입력 : ");

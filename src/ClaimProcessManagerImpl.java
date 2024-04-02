@@ -1,19 +1,20 @@
 package src;
 
-import java.time.LocalDate;
-import java.util.*;
 import java.io.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
-import static src.CustomerManagerImpl.deserializeCustomers;
 import static src.CustomerManagerImpl.serializeObject;
+import static src.DeserializationHelper.deserializeCustomers;
 
 public class ClaimProcessManagerImpl implements ClaimProcessManager {
     private Scanner scan = new Scanner(System.in);
-    private static List<Claim> claimList = new ArrayList<>();
+    private static List<Claim> claims = new ArrayList<>();
 
     @Override
     public void addClaim() {
-
         System.out.println("청구 아이디를 입력해주세요");
         String claimId = scan.next();
 
@@ -22,36 +23,73 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
 
         // 고객이 존재하는지 확인
         Customer customer = findCustomerById(customerId);
+        if (customer != null) {
+            // 고객 정보에서 필요한 정보 가져오기
+            String customerFullName = customer.getFullName();
+            InsuranceCard cardNumber = customer.getInsuranceCard();
+
+            // Claim date 설정
+            LocalDate claimDate = LocalDate.now();
+
+            System.out.println("진료일을 입력해주세요 (예: 2024-12-31): ");
+            String dateInput2 = scan.next();
+            LocalDate examDate = LocalDate.parse(dateInput2);
+
+            System.out.println("청구 금액을 입력해주세요");
+            double amount = scan.nextDouble();
+
+            // 고객 객체 생성
+            Claim claim = new Claim(claimId, customerId, customerFullName, cardNumber, claimDate, examDate, amount);
+            claims.add(claim);
+            updateCustomerClaimFile(customer, claim);
+            System.out.println(customerId + "회원의 청구가 등록되었습니다.");
+            serializeObject(claim, "claim/" + claim.getId() + ".txt");
+
+        } else {
+            System.out.println("고객이 존재하지 않습니다.");
+        }
+    }
 
 
-        // 고객 정보에서 필요한 정보 가져오기
-        String customerFullName = customer.getFullName();
-        InsuranceCard cardNumber = customer.getInsuranceCard();
+//        // 고객 정보에서 필요한 정보 가져오기
+//        String customerFullName = customer.getFullName();
+//        InsuranceCard cardNumber = customer.getInsuranceCard();
+//
+//        // Claim date 설정
+//        LocalDate claimDate = LocalDate.now();
+//
+//
+//        System.out.println("진료일을 입력해주세요 (예: 2024-12-31): ");
+//        String dateInput2 = scan.next();
+//        LocalDate examDate = LocalDate.parse(dateInput2);
+//
+//        System.out.println("청구 금액을 입력해주세요");
+//        double amount = scan.nextDouble();
+//
+//
+//        // 고객 객체 생성
+//        Claim claim = new Claim(claimId, customerId, customerFullName, cardNumber, claimDate, examDate, amount);
+//
+//        // 고객 리스트에 추가
+//        claimList.add(claim);
+//
+//        // 직렬화
+//        serializeObject(claim, "claim/" + claim.getId() + ".txt");
+//
+//        System.out.println(customerId + "회원의 청구가 등록되었습니다.");
+//
 
-        // Claim date 설정
-        LocalDate claimDate = LocalDate.now();
 
+    private void updateCustomerClaimFile(Customer customer, Claim claim) {
+        String customerFileName = "customer/policyHolder/" + customer.getId() + ".txt";
 
-        System.out.println("진료일을 입력해주세요 (예: 2024-12-31): ");
-        String dateInput2 = scan.next();
-        LocalDate examDate = LocalDate.parse(dateInput2);
-
-        System.out.println("청구 금액을 입력해주세요");
-        double amount = scan.nextDouble();
-
-
-        // 고객 객체 생성
-        Claim claim = new Claim(claimId, customerId, customerFullName, cardNumber, claimDate, examDate, amount);
-
-        // 고객 리스트에 추가
-        claimList.add(claim);
-
-        // 직렬화
-        serializeObject(claim, "claim/" + claim.getId() + ".txt");
-
-        System.out.println(customerId + "회원의 청구가 등록되었습니다.");
-
-
+        try (FileWriter fw = new FileWriter(customerFileName, true);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw)) {
+            out.println(claim.toString());
+        } catch (IOException e) {
+            System.err.println("Error occurred while adding claim information to the file: " + e.getMessage());
+        }
     }
 
     public Customer findCustomerById(String customerId) {
@@ -81,7 +119,7 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
                     Scanner scan = new Scanner(System.in);
                     System.out.println("무엇을 수정하시겠어요?");
                     System.out.println("## [1]아이디 [2]진료일 변경 [3]청구 금액 변경");
-                    System.out.println("## [5]policyHolder [6]유효기간 수정 [7]취소");
+                    System.out.println("## [4]컨펌하기 [6]유효기간 수정 [7]취소");
                     int number = scan.nextInt();
 
                     switch (number) {
@@ -118,6 +156,17 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
                             System.out.println("변경할 청구 금액 : ");
                             double newAmount = scan.nextDouble();
                             claim.setClaimAmount(newAmount);
+                        case 4:
+                            System.out.println("해당 청구를 컨펌하시겠습니까?");
+                            boolean confirm = scan.nextBoolean();
+                            if (confirm) {
+                                claim.setStatus("Processing");
+                                System.out.println("청구가 컨펌되었습니다.");
+                            } else {
+                                System.out.println("청구 컨펌이 취소되었습니다.");
+                            }
+                            break;
+
                         case 6:
                             System.out.println("취소");
                             break;
