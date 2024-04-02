@@ -12,7 +12,6 @@ public interface ClaimProcessManager {
 
     void getAllClaim();
 
-    void getMenu();
 
 
 }

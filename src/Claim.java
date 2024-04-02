@@ -1,7 +1,9 @@
 package src;
 
 import java.io.*;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -22,9 +24,7 @@ public class Claim implements Serializable {
 
     private Customer customer;
 
-    public Claim() {
 
-    }
     public Claim(String claimId, String customerId, String customerFullName, InsuranceCard cardNumber ,LocalDate claimDate, LocalDate examDate, double claimAmount) {
         this.id = claimId;
         this.claimDate = claimDate;
@@ -33,8 +33,9 @@ public class Claim implements Serializable {
         this.insuredPersonFullName = customerFullName;
         this.examDate = examDate;
         this.claimAmount = claimAmount;
-    }
+        this.status = "New"; // status 초기화
 
+    }
 
     public String getId() {
         return id;
@@ -68,13 +69,13 @@ public class Claim implements Serializable {
         this.claimAmount = claimAmount;
     }
 
-    public String getStatus() {
-        return status;
-    }
+//    public String getStatus() {
+//        return status;
+//    }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+//    public void setStatus(String status) {
+//        this.status = status;
+//    }
 
     public LocalDate getClaimDate() {
         return claimDate;
@@ -116,6 +117,14 @@ public class Claim implements Serializable {
         this.insuredPersonFullName = insuredPersonFullName;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         String cardNumber = (insuranceCard != null) ? insuranceCard.getCardNumber() : "N/A";
@@ -127,6 +136,7 @@ public class Claim implements Serializable {
                 ", CLAIM DATE=" + claimDate +
                 ", EXAM DATE=" + examDate +
                 ", CLAIM AMOUNT=" + claimAmount +
+                ", STATUS=" + status + // 상태 정보 추가
                 '}';
     }
 }

@@ -24,6 +24,9 @@ public class InsuranceCard implements Serializable {
 
 
 
+
+
+
     public String getCardNumber() {
         return cardNumber;
     }
