@@ -81,7 +81,7 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
 
 
     private void updateCustomerClaimFile(Customer customer, Claim claim) {
-        String customerFileName = "customer/policyHolder/" + customer.getId() + ".txt";
+        String customerFileName = "customer/" + customer.getId() + ".txt";
 
         try (FileWriter fw = new FileWriter(customerFileName, true);
              BufferedWriter bw = new BufferedWriter(fw);
