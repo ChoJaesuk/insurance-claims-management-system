@@ -186,6 +186,30 @@ public class Customer implements Serializable {
     public void addDependent(Customer dependent) {
         this.dependents.add(dependent);
     }
+// Customer 클래스 내에 추가
+
+    public boolean hasDependent(String dependentId) {
+        if (dependents != null) {
+            for (Customer dependent : dependents) {
+                if (dependent.getId().equals(dependentId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void updateDependent(Customer updatedDependent) {
+        if (dependents != null) {
+            for (int i = 0; i < dependents.size(); i++) {
+                Customer dependent = dependents.get(i);
+                if (dependent.getId().equals(updatedDependent.getId())) {
+                    dependents.set(i, updatedDependent);
+                    return;
+                }
+            }
+        }
+    }
 
     public String getDependentInfo() {
         String cardNumber = (insuranceCard != null) ? insuranceCard.getCardNumber() : "N/A";
@@ -201,45 +225,32 @@ public class Customer implements Serializable {
     }
     @Override
     public String toString() {
-        String cardNumber = (insuranceCard != null) ? insuranceCard.getCardNumber() : "N/A";
-        StringBuilder dependentList = new StringBuilder();
-        if (dependents != null) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ID: ").append(id).append("\n")
+                .append("이름: ").append(fullName).append("\n")
+                .append("Policy Holder: ").append(isPolicyHolder ? "Yes" : "No").append("\n")
+                .append("Policy Owner: ").append(policyOwner).append("\n");
+
+        // 보험 카드 정보가 있는 경우
+        if (insuranceCard != null) {
+            sb.append("보험 카드 번호: ").append(insuranceCard.getCardNumber()).append("\n")
+                    .append("보험 만료일: ").append(insuranceCard.getExpirationDate()).append("\n");
+        } else {
+            sb.append("보험 카드 정보가 없습니다.\n");
+        }
+
+        // 종속자 정보는 Policy Holder일 경우에만 출력
+        if (isPolicyHolder && dependents != null && !dependents.isEmpty()) {
+            sb.append("종속자 목록:\n");
             for (Customer dependent : dependents) {
-                dependentList.append(dependent.getDependentId()).append("(").append(dependent.getDependentFullName()).append("), ");
+                sb.append("\tID: ").append(dependent.getId()).append("\n")
+                        .append("\t이름: ").append(dependent.getFullName()).append("\n")
+                        // 종속자의 보험 카드 번호 출력
+                        .append("\t보험 카드 번호: ").append(dependent.getInsuranceCard() != null ? dependent.getInsuranceCard().getCardNumber() : "정보 없음").append("\n\n");
             }
-            // 리스트의 마지막 ", " 제거
-            if (dependentList.length() > 0) {
-                dependentList.delete(dependentList.length() - 2, dependentList.length());
-            }
-        } else {
-            dependentList.append("N/A");
         }
 
-
-        StringBuilder claimList = new StringBuilder();
-        if (claims != null) {
-            for (Claim claim : claims) {
-                claimList.append(claim.toString()).append(", ");
-            }
-            // 리스트의 마지막 ", " 제거
-            if (claimList.length() > 0) {
-                claimList.delete(claimList.length() - 2, claimList.length());
-            }
-        } else {
-            claimList.append("N/A");
-        }
-
-
-        return "Customer{" +
-                "ID='" + id + '\'' +
-                ", NAME='" + fullName + '\'' +
-                ", POLICY HOLDER=" + isPolicyHolder +
-                ", POLICY OWNER=" + policyOwner +
-                ", INSURANCE CARD NUMBER=" + cardNumber +
-                ", expirationDate=" + expirationDate +
-                ", LIST OF CLAIMS=" + claimList.toString() + // 청구 정보 출력 추가
-                ", LIST OF DEPENDENTS=" + dependentList +
-                '}';
+        return sb.toString();
     }
 
 }

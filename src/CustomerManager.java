@@ -10,6 +10,8 @@ public interface CustomerManager {
 
 
 
+
+
     void updateDependentInfoAndUpdateCustomer(String dependentId, Customer parentCustomer);
 
     void deleteCustomer();
@@ -19,7 +21,7 @@ public interface CustomerManager {
     void getAllCustomers();
 
 
-    void addDependent(Customer policyHolder);
+//    void addDependent(Customer policyHolder);
 
     void getAllDependents();
 }
