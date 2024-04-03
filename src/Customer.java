@@ -50,17 +50,6 @@ public class Customer implements Serializable {
     }
 
 
-
-    // 기타 메소드 생략...
-
-    // 청구를 고객의 청구 리스트에 추가하는 메소드
-
-
-    // 고객이 접수한 청구 정보를 반환하는 메소드
-
-
-
-
     public Customer(String id, String fullName, boolean isPolicyHolder, String policyOwner, LocalDate expirationDate, InsuranceCard insuranceCard) {
 
         this.id = id;
@@ -94,12 +83,6 @@ public class Customer implements Serializable {
 
     }
 
-//    public Customer(String dependentId, String dependentFullName, boolean isPolicyHolder) {
-//        this.dependentId = dependentId;
-//        this.dependentFullName = dependentFullName;
-//        this.isPolicyHolder = isPolicyHolder;
-////        this.insuranceCard = insuranceCard;
-//    }
 
     public void setDependentsInfo(String id, String policyOwner, LocalDate expirationDate) {
         this.id = id;
@@ -239,6 +222,22 @@ public class Customer implements Serializable {
             sb.append("보험 카드 정보가 없습니다.\n");
         }
 
+        if (claims != null && !claims.isEmpty()) {
+            sb.append("클레임 목록:\n");
+            for (Claim claim : claims) {
+                sb.append("\t클레임 ID: ").append(claim.getId()).append("\n")
+                        .append("\t클레임 날짜: ").append(claim.getClaimDate()).append("\n")
+                        .append("\tInsured person: ").append(claim.getInsuredPersonFullName()).append("\n")
+                        .append("\tCard number: ").append(insuranceCard.getCardNumber()).append("\n")
+                        .append("\t검사 날짜: ").append(claim.getExamDate()).append("\n")
+                        .append("\t청구 금액: ").append(claim.getClaimAmount()).append("\n")
+                        .append("\t상태: ").append(claim.getStatus()).append("\n")
+                        .append("\t수령인 은행 정보: ").append(claim.getReceiverBankingInfo()).append("\n\n");
+            }
+        } else {
+            sb.append("클레임 정보가 없습니다.\n");
+        }
+
         // 종속자 정보는 Policy Holder일 경우에만 출력
         if (isPolicyHolder && dependents != null && !dependents.isEmpty()) {
             sb.append("종속자 목록:\n");
@@ -249,6 +248,7 @@ public class Customer implements Serializable {
                         .append("\t보험 카드 번호: ").append(dependent.getInsuranceCard() != null ? dependent.getInsuranceCard().getCardNumber() : "정보 없음").append("\n\n");
             }
         }
+
 
         return sb.toString();
     }

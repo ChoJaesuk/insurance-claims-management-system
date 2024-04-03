@@ -1,19 +1,17 @@
 package src;
 
 import java.io.*;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 
 public class Claim implements Serializable {
-
+    private static final long serialVersionUID = 1L;
     private String id;
     private LocalDate claimDate;
     private String insuredPersonId;
     private String insuredPersonFullName;
-    private int cardNumber;
+    private InsuranceCard cardNumber;
     private LocalDate examDate;
     private List<String> documents;
     private double claimAmount;
@@ -85,11 +83,11 @@ public class Claim implements Serializable {
         this.claimDate = claimDate;
     }
 
-    public int getCardNumber() {
+    public InsuranceCard getCardNumber() {
         return cardNumber;
     }
 
-    public void setCardNumber(int cardNumber) {
+    public void setCardNumber(InsuranceCard cardNumber) {
         this.cardNumber = cardNumber;
     }
 

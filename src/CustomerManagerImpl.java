@@ -52,8 +52,10 @@ public class CustomerManagerImpl implements CustomerManager {
 
     @Override
     public void addCustomer() {
-        System.out.println("아이디를 입력해주세요");
-        String id = scan.next();
+        InsuranceCard insuranceCard2 = new InsuranceCard();
+        IdGenerator idGenerator = new IdGenerator();
+
+        String id = idGenerator.generateCustomerId();
 
         System.out.println("이름을 입력해주세요");
         String fullName = scan.next();
@@ -69,7 +71,7 @@ public class CustomerManagerImpl implements CustomerManager {
         String policyOwner = scan.next();
 
         // 보험 카드 생성
-        String cardNumber = generateRandomCardNumber();
+        String cardNumber = insuranceCard2.generateRandomCardNumber(); // 중복 검사를 포함한 카드 번호 생성
         InsuranceCard insuranceCard = new InsuranceCard(cardNumber);
         insuranceCard.setCardInfo(fullName, policyOwner, expirationDate);
 
@@ -81,12 +83,15 @@ public class CustomerManagerImpl implements CustomerManager {
 
         // 직렬화
         serializeObject(cus, "customer/" + cus.getId() + ".txt");
+        serializeObject(insuranceCard, "insuranceCard/" + insuranceCard.getCardNumber() + ".txt");
         System.out.println(fullName + "회원이 등록되었습니다.");
 
 
     }
 
     public void addDependent() {
+        InsuranceCard insuranceCard2 = new InsuranceCard();
+        IdGenerator idGenerator = new IdGenerator();
         System.out.println("Policy Holder의 ID를 입력해주세요:");
         String policyHolderId = scan.next();
 
@@ -98,12 +103,11 @@ public class CustomerManagerImpl implements CustomerManager {
         }
 
         // Dependent 정보 입력 받기
-        System.out.println("Dependent의 ID를 입력해주세요:");
-        String dependentId = scan.next();
+        String dependentId = idGenerator.generateCustomerId();
         System.out.println("Dependent의 이름을 입력해주세요:");
         String dependentFullName = scan.next();
 
-        String cardNumber = generateRandomCardNumber(); // 보험 카드 번호 생성
+        String cardNumber = insuranceCard2.generateRandomCardNumber(); // 보험 카드 번호 생성
         InsuranceCard dependentInsuranceCard = new InsuranceCard(cardNumber);
         dependentInsuranceCard.setCardInfo(dependentFullName, policyHolder.getPolicyOwner(), policyHolder.getInsuranceCard().getExpirationDate());
 
@@ -118,6 +122,7 @@ public class CustomerManagerImpl implements CustomerManager {
 
         // 변경된 PolicyHolder 정보 직렬화
         serializeObject(policyHolder, "customer/" + policyHolder.getId() + ".txt");
+        serializeObject(dependentInsuranceCard, "insuranceCard/" + dependentInsuranceCard.getCardNumber() + ".txt");
 
         System.out.println("Dependent가 성공적으로 추가되었습니다.");
     }
@@ -132,44 +137,6 @@ public class CustomerManagerImpl implements CustomerManager {
             }
         }
         return null; // 찾지 못했으면 null 반환
-    }
-
-//    @Override
-//// policyHolder의 dependent 추가 메소드
-//    public void addDependent(Customer policyHolder) {
-//        System.out.println("Dependent의 ID를 입력해주세요: ");
-//        String dependentId = scan.next();
-//
-//        System.out.println("Dependent의 이름을 입력해주세요: ");
-//        String dependentName = scan.next();
-//
-//
-//        // 보험 카드 생성
-//        String cardNumber = generateRandomCardNumber();
-//        InsuranceCard insuranceCard = new InsuranceCard(cardNumber);
-//        insuranceCard.setCardInfo(dependentName, policyHolder.getPolicyOwner(), policyHolder.getExpirationDate());
-//        // Dependent 정보를 생성합니다.
-//        Customer dependent = new Customer(dependentId, dependentName, false, policyHolder.getId(), policyHolder.getExpirationDate(), policyHolder.getPolicyOwner(), insuranceCard);
-//
-//        // policyHolder의 dependents 리스트에 추가합니다.
-//        policyHolder.getDependents().add(dependent);
-//
-//        // 직렬화하여 policyHolder 정보 업데이트
-//        serializeObject(dependent, "customer/dependent/" + dependentId + ".txt");
-//
-//
-//        System.out.println("Dependent가 등록되었습니다.");
-//    }
-
-    // 랜덤한 10자리 숫자를 생성하는 메서드
-    private String generateRandomCardNumber() {
-        Random random = new Random();
-        StringBuilder cardNumberBuilder = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            int digit = random.nextInt(10);
-            cardNumberBuilder.append(digit);
-        }
-        return cardNumberBuilder.toString();
     }
 
     @Override
