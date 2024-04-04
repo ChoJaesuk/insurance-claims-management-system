@@ -231,8 +231,8 @@ public class Customer implements Serializable {
                         .append("\tCard number: ").append(insuranceCard.getCardNumber()).append("\n")
                         .append("\t검사 날짜: ").append(claim.getExamDate()).append("\n")
                         .append("\t청구 금액: ").append(claim.getClaimAmount()).append("\n")
-                        .append("\t상태: ").append(claim.getStatus()).append("\n")
-                        .append("\t수령인 은행 정보: ").append(claim.getReceiverBankingInfo()).append("\n\n");
+                        .append("\t수령인 은행 정보: ").append(claim.getBankingInfo().toString()).append("\n\n")
+                        .append("\t상태: ").append(claim.getStatus()).append("\n");
             }
         } else {
             sb.append("클레임 정보가 없습니다.\n");

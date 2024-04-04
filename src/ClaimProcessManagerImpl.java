@@ -24,7 +24,8 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
         Customer customer = findCustomerById(customerId);
         if (customer != null) {
             // 고객 정보에서 필요한 정보 가져오기
-            String customerFullName = customer.getFullName();
+            String policyHolderFullName = customer.getFullName();
+
             InsuranceCard cardNumber = customer.getInsuranceCard();
 
             String claimId = idGenerator.generateClaimId();
@@ -36,11 +37,22 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
             String dateInput2 = scan.next();
             LocalDate examDate = LocalDate.parse(dateInput2);
 
-            System.out.println("청구 금액을 입력해주세요");
+            System.out.println("청구 금액을 입력해주세요.");
             double amount = scan.nextDouble();
 
+            System.out.println("은행 이름을 입력하세요");
+            String bankName = scan.next();
+
+            System.out.println("계좌번호를 입력하세요.");
+            String accountNumber = scan.next();
+
+            System.out.println("보험금을 청구할 고객의 이름을 입력하세요.");
+            String insuredPersonFullName = scan.next();
+
+            ReceiverBankingInfo bankingInfo = new ReceiverBankingInfo(bankName, insuredPersonFullName, accountNumber);
+
             // 고객 객체 생성
-            Claim claim = new Claim(claimId, customerId, customerFullName, cardNumber, claimDate, examDate, amount);
+            Claim claim = new Claim(claimId, customerId, policyHolderFullName, insuredPersonFullName, cardNumber, claimDate, examDate, amount, bankingInfo);
 
             // 고객 객체에 클레임 추가
             if (customer.getClaims() == null) {
