@@ -111,13 +111,14 @@ public class InsuranceClaimManager {
 
     public void menuForManagingClaim() {
         Scanner scan = new Scanner(System.in);
+        InsurancePaymentManager insurancePaymentManager = new InsurancePaymentManager();
 
         while (true) {
             System.out.println();
             System.out.println("###### 회원 관리 프로그램 ######");
             System.out.println("## [1]청구 추가 [2]청구 수정 [3]청구 삭제 ##");
-            System.out.println("## [4]청구 하나 가져오기 [5]청구 다 가져오기 [6]파일 생성하기위한 작업 ##");
-            System.out.println("## [7]파일 리스트 [8] [3]##");
+            System.out.println("## [4]청구 검색 [5]청구 다 가져오기 [6]보험금 지급 ##");
+            System.out.println("## [7]보험금 지급 내역서 리스트 출력 [8]종료 ##");
             System.out.println("##########################");
 
             System.out.println(" 메뉴 입력 : ");
@@ -146,6 +147,10 @@ public class InsuranceClaimManager {
                     break;
 
                 case 6:
+                    insurancePaymentManager.processInsurancePayment();
+                    break;
+
+                case 8:
                     System.out.println("프로그램 종료합니다.");
                     System.exit(0);    // 프로그램 강제종료
 

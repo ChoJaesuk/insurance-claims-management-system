@@ -11,6 +11,7 @@ public class Claim implements Serializable {
     private LocalDate claimDate;
     private String insuredPersonId;
     private String insuredPersonFullName;
+    private String policyHolderFullName;
     private InsuranceCard cardNumber;
     private LocalDate examDate;
     private List<String> documents;
@@ -20,21 +21,55 @@ public class Claim implements Serializable {
 
     private InsuranceCard insuranceCard;
 
-    private Customer customer;
+
+    private ReceiverBankingInfo bankingInfo;
 
 
-    public Claim(String claimId, String customerId, String customerFullName, InsuranceCard cardNumber ,LocalDate claimDate, LocalDate examDate, double claimAmount) {
+    public String getPolicyHolderFullName() {
+        return policyHolderFullName;
+    }
+
+    public void setPolicyHolderFullName(String policyHolderFullName) {
+        this.policyHolderFullName = policyHolderFullName;
+    }
+
+    public String getInsuredPersonId() {
+        return insuredPersonId;
+    }
+
+    public void setInsuredPersonId(String insuredPersonId) {
+        this.insuredPersonId = insuredPersonId;
+    }
+
+    public Claim(String claimId, String customerId, String policyHolderFullName, String insuredPersonFullName, InsuranceCard cardNumber , LocalDate claimDate, LocalDate examDate, double claimAmount, ReceiverBankingInfo bankingInfo) {
         this.id = claimId;
         this.claimDate = claimDate;
         this.insuredPersonId = customerId;
         this.insuranceCard = cardNumber;
-        this.insuredPersonFullName = customerFullName;
+        this.insuredPersonFullName = insuredPersonFullName;
         this.examDate = examDate;
         this.claimAmount = claimAmount;
         this.status = "New"; // status 초기화
+        this.policyHolderFullName = policyHolderFullName;
+        this.bankingInfo = bankingInfo;
+
 
     }
 
+    public Claim(String id, String status, double claimAmount, ReceiverBankingInfo bankingInfo) {
+        this.id = id;
+        this.status = status;
+        this.claimAmount = claimAmount;
+        this.bankingInfo = bankingInfo;
+    }
+
+    public ReceiverBankingInfo getBankingInfo() {
+        return bankingInfo;
+    }
+
+    public void setBankingInfo(ReceiverBankingInfo bankingInfo) {
+        this.bankingInfo = bankingInfo;
+    }
     public String getId() {
         return id;
     }
