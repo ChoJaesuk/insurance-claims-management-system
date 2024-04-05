@@ -30,10 +30,6 @@ public class InsuranceCard implements Serializable {
     }
 
 
-
-
-
-
     public String getCardNumber() {
         return cardNumber;
     }
@@ -81,15 +77,6 @@ public class InsuranceCard implements Serializable {
         return expirationDate;
     }
 
-    private void serializeObject(Object obj, String filePath) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            oos.writeObject(obj);
-            System.out.println(obj.getClass().getSimpleName() + " has been saved to " + filePath);
-        } catch (IOException e) {
-            System.out.println("Error occurred during serialization.");
-            e.printStackTrace();
-        }
-    }
     @Override
     public String toString() {
         return "InsuranceCard{" +

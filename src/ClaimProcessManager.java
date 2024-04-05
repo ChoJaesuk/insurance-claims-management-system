@@ -8,7 +8,7 @@ public interface ClaimProcessManager {
 
     void getOne();
 
-
+    void getDocumentsList();
 
     void getAllClaim();
 

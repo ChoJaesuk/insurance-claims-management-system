@@ -23,6 +23,12 @@ public class Claim implements Serializable {
 
 
     private ReceiverBankingInfo bankingInfo;
+    public Claim(String claimId, InsuranceCard cardNumber) {
+
+        this.id = claimId;
+        this.cardNumber = cardNumber;
+
+    }
 
 
     public String getPolicyHolderFullName() {
@@ -41,7 +47,7 @@ public class Claim implements Serializable {
         this.insuredPersonId = insuredPersonId;
     }
 
-    public Claim(String claimId, String customerId, String policyHolderFullName, String insuredPersonFullName, InsuranceCard cardNumber , LocalDate claimDate, LocalDate examDate, double claimAmount, ReceiverBankingInfo bankingInfo) {
+    public Claim(String claimId, String customerId, String insuredPersonFullName, InsuranceCard cardNumber , LocalDate claimDate, LocalDate examDate, double claimAmount, ReceiverBankingInfo bankingInfo) {
         this.id = claimId;
         this.claimDate = claimDate;
         this.insuredPersonId = customerId;
@@ -50,7 +56,6 @@ public class Claim implements Serializable {
         this.examDate = examDate;
         this.claimAmount = claimAmount;
         this.status = "New"; // status 초기화
-        this.policyHolderFullName = policyHolderFullName;
         this.bankingInfo = bankingInfo;
 
 
@@ -164,7 +169,7 @@ public class Claim implements Serializable {
         return "Claim{" +
                 "CLAIM ID='" + id + '\'' +
                 "CUSTOMER ID='" + insuredPersonId + '\'' +
-                ", NAME='" + insuredPersonFullName + '\'' +
+                ", INSURED PERSON NAME='" + insuredPersonFullName + '\'' +
                 ", INSURANCE CARD NUMBER=" + cardNumber+
                 ", CLAIM DATE=" + claimDate +
                 ", EXAM DATE=" + examDate +

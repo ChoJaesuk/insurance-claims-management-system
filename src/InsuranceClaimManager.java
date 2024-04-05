@@ -19,12 +19,11 @@ public class InsuranceClaimManager {
 
         while (true) {
             System.out.println();
-            System.out.println("###### 회원 관리 프로그램 ######");
-            System.out.println("## [1]고객 관리 [2]청구 관리 ##");
-            System.out.println("## [3]보고서 생성 및 저장 [4]프로그램 종료 ##");
-            System.out.println("##########################");
+            System.out.println("###### insurance claims management system ######");
+            System.out.println("## [1] managing Customers [2] Managing Claims [3] End the program ##");
+            System.out.println("#################################################");
 
-            System.out.println(" 메뉴 입력 : ");
+            System.out.println(" Input Menu : ");
             int choice = scan.nextInt();
 
             switch (choice) {
@@ -46,7 +45,7 @@ public class InsuranceClaimManager {
                     System.exit(0);    // 프로그램 강제종료
 
                 default:
-                    System.out.println("잘못입력 하셨습니다.");
+                    System.out.println("Wrong Input.");
 
 
         }
@@ -59,13 +58,12 @@ public class InsuranceClaimManager {
 
             while (true) {
                 System.out.println();
-                System.out.println("###### 회원 관리 프로그램 ######");
-                System.out.println("## [1]고객추가 [2]고객수정 [3]고객삭제 ##");
-                System.out.println("## [4]고객 아이디로 검색 [5]모든 고객 불러오기 [6]dependent 불러오기 [7]종료 ##");
-                System.out.println("## [7]dependent 삭제 [2]고객수정 [3]고객삭제 ##");
-                System.out.println("##########################");
+                System.out.println("###### Managing Customers ######");
+                System.out.println("## [1] Add Customer [2] Update Customer [3] Delete Customer ##");
+                System.out.println("## [4] Search  A Customer By ID [5] Get All Customers  ##");
+                System.out.println("## [6] Get All Dependent [7] Back to the Main Menu [8] End the program ##");
 
-                System.out.println(" 메뉴 입력 : ");
+                System.out.println(" Input Menu : ");
                 int choice = scan.nextInt();
 
                 switch (choice) {
@@ -95,11 +93,11 @@ public class InsuranceClaimManager {
                         break;
 
                     case 7:
+                        start();
+                        break;
 
-
-
-                    case 9:
-                        System.out.println("프로그램 종료합니다.");
+                    case 8:
+                        System.out.println("End the program.");
                         System.exit(0);    // 프로그램 강제종료
 
                     default:
@@ -115,13 +113,13 @@ public class InsuranceClaimManager {
 
         while (true) {
             System.out.println();
-            System.out.println("###### 회원 관리 프로그램 ######");
-            System.out.println("## [1]청구 추가 [2]청구 수정 [3]청구 삭제 ##");
-            System.out.println("## [4]청구 검색 [5]청구 다 가져오기 [6]보험금 지급 ##");
-            System.out.println("## [7]보험금 지급 내역서 리스트 출력 [8]종료 ##");
+            System.out.println("###### Managing Claims ######");
+            System.out.println("## [1] Add Claim [2] Update Claim [3] Delete Claim ##");
+            System.out.println("## [4] Search A Claim By ID [5] Get All Claims [6] Insurance Payment ##");
+            System.out.println("## [7] List All Documents [8] Back to the Main Menu [9] End the program##");
             System.out.println("##########################");
 
-            System.out.println(" 메뉴 입력 : ");
+            System.out.println(" Input Menu : ");
             int choice = scan.nextInt();
 
             switch (choice) {
@@ -150,12 +148,20 @@ public class InsuranceClaimManager {
                     insurancePaymentManager.processInsurancePayment();
                     break;
 
+                case 7:
+                    claimProcessManager.getDocumentsList();
+                    break;
+
                 case 8:
-                    System.out.println("프로그램 종료합니다.");
+                    start();
+                    break;
+
+                case 9:
+                    System.out.println("End the program");
                     System.exit(0);    // 프로그램 강제종료
 
                 default:
-                    System.out.println("잘못입력 하셨습니다.");
+                    System.out.println("Wrong Input!");
 
             }
         }
