@@ -23,16 +23,16 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
         System.out.println("Enter the Customer's ID : ");
         String customerId = scan.next();
 
-        // 고객이 존재하는지 확인
+        // Ensure that the customer exists
         Customer customer = findCustomerById(customerId);
         if (customer != null) {
-            // 고객 정보에서 필요한 정보 가져오기
+            // Get the information you need from customer information
 
             InsuranceCard cardNumber = customer.getInsuranceCard();
 
             String claimId = idGenerator.generateClaimId();
 
-            // Claim date 설정
+            // Set Claim date
             LocalDate claimDate = LocalDate.now();
 
             String insuredPersonFullName = customer.getFullName();
@@ -52,19 +52,19 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
 
             ReceiverBankingInfo bankingInfo = new ReceiverBankingInfo(bankName, insuredPersonFullName, accountNumber);
 
-            // 고객 객체 생성
+            // Create claim object
             Claim claim = new Claim(claimId, customerId, insuredPersonFullName, cardNumber, claimDate, examDate, amount, bankingInfo);
 
-            // 고객 객체에 클레임 추가
+            // Add Claims to Customer Objects
             if (customer.getClaims() == null) {
                 customer.setClaims(new ArrayList<>());
             }
             customer.getClaims().add(claim);
 
-            // 변경된 고객 정보 직렬화하여 저장
+            // Serialize and store changed customer information
             serializeObject(customer, "customer/" + customerId + ".txt");
 
-            // 클레임 정보 직렬화하여 저장
+            // Serialize and store claim information
             serializeObject(claim, "claim/" + claimId + ".txt");
 
             System.out.println(customerId + "'s new claim has been successfully added.");
@@ -83,7 +83,7 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
             }
         }
 
-        return null; // 해당 customerId에 해당하는 고객을 찾지 못한 경우
+        return null; // If you have not found a customer that corresponds to that customerId
     }
 
     @Override
@@ -97,7 +97,7 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
         Claim claimToBeUpdated = null;
         Customer customerToUpdate = null;
 
-        // 청구에 해당하는 고객을 먼저 찾습니다.
+        // Find the customer who is eligible for the claim first.
         customerToUpdate = findCustomerByClaimId(oldClaimId);
         if (customerToUpdate != null) {
             for (Claim claim : customerToUpdate.getClaims()) {
@@ -122,7 +122,7 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
 
         switch (number) {
             case 1:
-                // Claim 아이디 변경 로직 등을 수행
+                // Perform Claim ID change logic, etc
                 System.out.println("Enter a NEW Claim's iD : ");
                 String newClaimId = scanner.next();
                 claimToBeUpdated.setId(newClaimId);
@@ -160,10 +160,10 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
 
         }
         if (changesMade) {
-            // 변경된 Claim 정보 다시 직렬화하여 저장
+            // Reserial and save changed Claim information
             serializeObject(claimToBeUpdated, "claim/" + claimToBeUpdated.getId() + ".txt");
 
-            // 변경된 고객 정보 다시 직렬화하여 저장
+            // Reserial and store changed customer information
             serializeObject(customerToUpdate, "customer/" + customerToUpdate.getId() + ".txt");
 
             System.out.println("Claims and customer information have been successfully updated.");
@@ -171,21 +171,20 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
 
         }
 
-    // Claim 아이디 변경 및 파일 이름 변경 로직
+    // Change Claim ID and change file name logic
     public void updateClaimIdAndRenameFile(String oldClaimId, String newClaimId) {
-        // 파일 경로 지정 (실제 경로에 따라 조정 필요)
         String oldFilePath = "claim/" + oldClaimId + ".txt";
         String newFilePath = "claim/" + newClaimId + ".txt";
 
-        // 파일 객체 생성
+        // Create File Object
         File oldFile = new File(oldFilePath);
         File newFile = new File(newFilePath);
 
-        // 파일 이름 변경
+        // Change file name
         if (oldFile.renameTo(newFile)) {
-            System.out.println("파일 이름이 성공적으로 변경되었습니다: " + newFilePath);
+            System.out.println("File name changed successfully : " + newFilePath);
         } else {
-            System.out.println("파일 이름 변경에 실패했습니다.");
+            System.out.println("Failed to rename file.");
         }
     }
 
@@ -210,28 +209,29 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
 
 
     public void delete() {
+        listClaims();
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the Claim's ID to delete. : ");
         String claimId = scanner.next();
 
-        // Claim 삭제
+        // Delete a Claim
         Claim claimToDelete = null;
         Customer customerToUpdate = findCustomerByClaimId(claimId);
         if (customerToUpdate != null) {
             List<Claim> claims = customerToUpdate.getClaims();
             for (int i = 0; i < claims.size(); i++) {
                 if (claims.get(i).getId().equals(claimId)) {
-                    claimToDelete = claims.remove(i); // 해당 Claim을 삭제하고 반환받음
+                    claimToDelete = claims.remove(i); // Delete and return the Claim
                     break;
                 }
             }
 
             if (claimToDelete != null) {
-                // Claim이 성공적으로 찾아지고 삭제된 경우
-                // 변경된 Customer 객체를 다시 직렬화하여 저장
+                // Claim has been successfully found and deleted
+                // Reserialize and save changed Customer objects
                 serializeObject(customerToUpdate, "customer/" + customerToUpdate.getId() + ".txt");
 
-                // Claim의 텍스트 파일 삭제
+                // Delete Clime's text file
                 File claimFile = new File("claim/" + claimId + ".txt");
                 if (claimFile.exists()) {
                     claimFile.delete();
@@ -246,7 +246,6 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
     }
     @Override
     public void getOne() {
-        // 이름을 입력받아 해당 회원의 나이와 전화번호 출력하기
         List<Claim> claims = deserializeClaims();
         if (claims.isEmpty()) {
             System.out.println("There are no registered claims.");
@@ -297,9 +296,9 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
                 } else {
                     System.out.println("All Claims:");
                     for (Claim claim : claims) {
-                        // Customer 클래스의 getCustomerInfoString() 메서드를 사용하여 고객 정보 출력
+                        // Output customer information using the getCustomerInfoString() method in the Customer class
                         System.out.println(claim.toString());
-                        System.out.println(); // 고객 정보 간의 간격
+                        System.out.println();
                     }
                 }
                 break;
