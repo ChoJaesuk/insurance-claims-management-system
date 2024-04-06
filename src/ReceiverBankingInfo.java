@@ -42,7 +42,7 @@ public class ReceiverBankingInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "은행 이름: " + bankName + ", 계좌 번호: " + bankingNumber + ", 수령인 이름: " + receiverName;
+        return "Bank Name : " + bankName + ", Bank Account : " + bankingNumber + ", Receiver Name : " + receiverName;
     }
 
 }

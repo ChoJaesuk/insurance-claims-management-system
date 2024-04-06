@@ -114,13 +114,12 @@ public class Customer implements Serializable {
         this.insuranceCard = insuranceCard;
     }
 
-    public void setExpirationDate(LocalDate expirationDate) {
-        this.expirationDate = this.expirationDate;
-
-    }
-
     public LocalDate getExpirationDate() {
         return expirationDate;
+    }
+
+    public void setExpirationDate(LocalDate expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     public void setPolicyOwner() {
@@ -202,7 +201,6 @@ public class Customer implements Serializable {
                 ", POLICY OWNER=" + policyOwner +
                 ", INSURANCE CARD NUMBER=" + cardNumber +
                 ", expirationDate=" + expirationDate +
-//                ", LIST OF CLAIMS=" + claimList.toString() + // 청구 정보 출력 추가
 
                 '}';
     }
@@ -210,42 +208,42 @@ public class Customer implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("ID: ").append(id).append("\n")
-                .append("이름: ").append(fullName).append("\n")
+                .append("NAME: ").append(fullName).append("\n")
                 .append("Policy Holder: ").append(isPolicyHolder ? "Yes" : "No").append("\n")
                 .append("Policy Owner: ").append(policyOwner).append("\n");
 
         // 보험 카드 정보가 있는 경우
         if (insuranceCard != null) {
-            sb.append("보험 카드 번호: ").append(insuranceCard.getCardNumber()).append("\n")
-                    .append("보험 만료일: ").append(insuranceCard.getExpirationDate()).append("\n");
+            sb.append("InsuranceCard Number: ").append(insuranceCard.getCardNumber()).append("\n")
+                    .append("Expiration Date: ").append(insuranceCard.getExpirationDate()).append("\n");
         } else {
-            sb.append("보험 카드 정보가 없습니다.\n");
+            sb.append("No InsuranceCard Data.\n");
         }
 
         if (claims != null && !claims.isEmpty()) {
-            sb.append("클레임 목록:\n");
+            sb.append("List of Claims:\n");
             for (Claim claim : claims) {
-                sb.append("\t클레임 ID: ").append(claim.getId()).append("\n")
-                        .append("\t클레임 날짜: ").append(claim.getClaimDate()).append("\n")
+                sb.append("\tClaim ID: ").append(claim.getId()).append("\n")
+                        .append("\tClaim Date: ").append(claim.getClaimDate()).append("\n")
                         .append("\tInsured person: ").append(claim.getInsuredPersonFullName()).append("\n")
                         .append("\tCard number: ").append(insuranceCard.getCardNumber()).append("\n")
-                        .append("\t검사 날짜: ").append(claim.getExamDate()).append("\n")
-                        .append("\t청구 금액: ").append(claim.getClaimAmount()).append("\n")
-                        .append("\t수령인 은행 정보: ").append(claim.getBankingInfo().toString()).append("\n\n")
-                        .append("\t상태: ").append(claim.getStatus()).append("\n");
+                        .append("\tExam Date: ").append(claim.getExamDate()).append("\n")
+                        .append("\tClaim Amount: ").append(claim.getClaimAmount()).append("\n")
+                        .append("\tReceiver Banking Info: ").append(claim.getBankingInfo().toString()).append("\n\n")
+                        .append("\tStatus: ").append(claim.getStatus()).append("\n");
             }
         } else {
-            sb.append("클레임 정보가 없습니다.\n");
+            sb.append("No Claim Data.\n");
         }
 
         // 종속자 정보는 Policy Holder일 경우에만 출력
         if (isPolicyHolder && dependents != null && !dependents.isEmpty()) {
-            sb.append("종속자 목록:\n");
+            sb.append("List of Dependents:\n");
             for (Customer dependent : dependents) {
                 sb.append("\tID: ").append(dependent.getId()).append("\n")
-                        .append("\t이름: ").append(dependent.getFullName()).append("\n")
+                        .append("\tDependent Full Name: ").append(dependent.getFullName()).append("\n")
                         // 종속자의 보험 카드 번호 출력
-                        .append("\t보험 카드 번호: ").append(dependent.getInsuranceCard() != null ? dependent.getInsuranceCard().getCardNumber() : "정보 없음").append("\n\n");
+                        .append("\tInsuranceCard Number: ").append(dependent.getInsuranceCard() != null ? dependent.getInsuranceCard().getCardNumber() : "정보 없음").append("\n\n");
             }
         }
 

@@ -107,6 +107,7 @@ public class Claim implements Serializable {
         this.claimAmount = claimAmount;
     }
 
+
 //    public String getStatus() {
 //        return status;
 //    }

@@ -35,7 +35,7 @@ public class DeserializationHelper {
                     customers.add(customer);
 
                     // Deserialize claims for the customer
-                    File claimFile = new File("claim/" + customer.getId() + ".txt");
+                    File claimFile = new File("customer/" + customer.getId() + ".txt");
                     if (claimFile.exists()) {
                         try (ObjectInputStream claimInputStream = new ObjectInputStream(new FileInputStream(claimFile))) {
                             while ((object = claimInputStream.readObject()) != null) {
