@@ -402,15 +402,23 @@ public class CustomerManagerImpl implements CustomerManager {
         serializeObject(policyHolder, "customer/" + policyHolder.getId() + ".txt");
     }
     private void updateRelatedDependentClaims(Customer dependent) {
+        List<Claim> updatedClaims = new ArrayList<>();
         List<Claim> allClaims = deserializeClaims(); // 모든 클레임 정보를 역직렬화하여 불러옵니다.
 
         for (Claim claim : allClaims) {
             if (claim.getInsuredPersonId().equals(dependent.getId())) {
                 claim.setInsuredPersonFullName(dependent.getFullName());
+                // BankingInfo의 Receiver Name도 업데이트
+                if (claim.getBankingInfo() != null) {
+                    claim.getBankingInfo().setReceiverName(dependent.getFullName());
+                }
+                updatedClaims.add(claim); // 업데이트된 클레임을 리스트에 추가
                 // 업데이트된 클레임 정보를 다시 직렬화하여 저장
                 serializeObject(claim, "claim/" + claim.getId() + ".txt");
             }
         }
+        dependent.setClaims(updatedClaims); // dependent 객체 내의 claims 리스트를 업데이트
+        serializeObject(dependent, "customer/" + dependent.getId() + ".txt"); // 변경된 dependent 객체를 다시 직렬화하여 저장
         System.out.println("All related claims for the dependent have been updated.");
     }
 
@@ -638,10 +646,10 @@ public class CustomerManagerImpl implements CustomerManager {
         }
 
         for (Customer customer : customers) {
-            if(customer.getIsPolicyHolder() == true) {
+//            if(customer.getIsPolicyHolder() == true) {
                 System.out.println(customer.toString()); // Customer 객체의 toString 메소드 호출
                 System.out.println("---------------------------------------");
-            }
+//            }
         }
     }
 
