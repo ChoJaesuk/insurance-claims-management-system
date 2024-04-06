@@ -3,7 +3,6 @@ package src;
 import java.util.*;
 
 import static src.ClaimProcessManagerImpl.deserializeClaims;
-import static src.CustomerManagerImpl.serializeObject;
 import static src.DeserializationHelper.deserializeCustomers;
 
 
@@ -48,8 +47,8 @@ public class InsurancePaymentManager {
                                 claim.getDocuments().add(documentName);
 
                                 System.out.println("Payment has been processed successfully. Claim status updated to 'Done'.");
-                                serializeObject(claim, "claim/" + claim.getId() + ".txt"); // Reserialize and save changed Claim object list
-                                serializeObject(customer, "customer/" + customer.getId() + ".txt");
+                                SerializationUtils.serialize(claim, "claim/" + claim.getId() + ".txt"); // Reserialize and save changed Claim object list
+                                SerializationUtils.serialize(customer, "customer/" + customer.getId() + ".txt");
                                 return;
                             } else {
                                 System.out.println("Payment cancelled.");
