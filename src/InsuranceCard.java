@@ -13,6 +13,10 @@ public class InsuranceCard implements Serializable {
 
     private Set<String> existingCardNumbers;
 
+    public void setExpirationDate(LocalDate expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
     public InsuranceCard() {
         existingCardNumbers = new HashSet<>();
         loadExistingCardNumbers();
@@ -83,5 +87,6 @@ public class InsuranceCard implements Serializable {
                 "cardNumber='" + cardNumber + '\'' +
                 '}';
     }
+
 
 }

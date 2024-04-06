@@ -103,72 +103,6 @@ public class CustomerManagerImpl implements CustomerManager {
         return null; // 찾지 못했으면 null 반환
     }
 
-//    @Override
-//    public void updateCustomer() {
-//
-//        listCustomersWithoutDependents();
-//
-//        System.out.println("Enter the Customer ID to update (NOT DEPENDENT)");
-//        String customerId = scan.next();
-//
-//        // 고객 찾기
-//        Customer customer = findCustomerById(customerId);
-//        if (customer == null) {
-//            System.out.println("There is no Customer with the ID you entered.");
-//            return;
-//        }
-//
-//        System.out.println("Please choose a option to update");
-//        System.out.println("## [1] Customer's ID  [2] Customer's Full Name [3] Customer's Expiration Date ##");
-//        System.out.println("## [4] Add Dependent [5] Delete Dependent [6] Update Dependent(ID, FullName) [7] 취소 ##");
-//        int choice = scan.nextInt();
-//        scan.nextLine(); // 숫자 입력 후 남은 줄바꿈 문자 제거
-//
-//        switch (choice) {
-//            case 1:
-//                System.out.println("Enter a NEW Customer's ID. :");
-//                String newId = scan.next();
-//                // 기존 파일 삭제 및 새로운 ID로 파일 이름 변경
-//                if (!customerId.equals(newId)) { // 새로운 ID가 기존 ID와 다를 경우에만 실행
-//                    renameCustomerFile(customerId, newId);
-//                    customer.setId(newId);
-//                }
-//                serializeObject(customer, "customer/" + customer.getId() + ".txt");
-//                break;
-//            case 2:
-//                System.out.println("Enter a NEW Customer's FullName. :");
-//                String newFullName = scan.next();
-//                customer.setFullName(newFullName);
-//                serializeObject(customer, "customer/" + customer.getId() + ".txt");
-//                break;
-//            case 3:
-//                System.out.println("Enter a NEW Customer's Expiration Date. : (ex : 2024-12-31):");
-//                String dateInput = scan.next();
-//                LocalDate newExpirationDate = LocalDate.parse(dateInput);
-//                customer.setExpirationDate(newExpirationDate);
-//                serializeObject(customer, "customer/" + customer.getId() + ".txt");
-//                break;
-//
-//            case 4:
-//                addDependent(customerId);
-//                break;
-//
-//            case 5:
-//                deleteDependent();
-//                break;
-//
-//            case 6:
-//                updateDependentInfo(customerId);
-//            default:
-//                System.out.println("Wrong Input!");
-//                return;
-//        }
-//
-//        // 업데이트된 고객 정보 직렬화
-//        System.out.println(customerId + "has been successfully updated.");
-//        updateClaimsForCustomer(customer);
-//    }
-
     @Override
     public void updateCustomer() {
         listCustomersWithoutDependents();
@@ -212,15 +146,15 @@ public class CustomerManagerImpl implements CustomerManager {
                 System.out.println("Enter a NEW Customer's Expiration Date. : (ex : 2024-12-31):");
                 String dateInput = scan.next();
                 LocalDate newExpirationDate = LocalDate.parse(dateInput);
-                customerToUpdate.setExpirationDate(newExpirationDate);
-                if (customerToUpdate.getDependents() != null && !customerToUpdate.getDependents().isEmpty()) {
+                customerToUpdate.getInsuranceCard().setExpirationDate(newExpirationDate); // 고객의 보험 카드 만료 날짜 업데이트
+                if (customerToUpdate.getDependents() != null) {
                     for (Customer dependent : customerToUpdate.getDependents()) {
-                        dependent.setExpirationDate(newExpirationDate);
-                        // 변경된 종속자 정보 직렬화
-                        serializeObject(dependent, "customer/" + dependent.getId() + ".txt");
+                        if(dependent.getInsuranceCard() != null) {
+                            dependent.getInsuranceCard().setExpirationDate(newExpirationDate); // 종속자의 보험 카드 만료 날짜 업데이트
+                            serializeObject(dependent, "customer/" + dependent.getId() + ".txt"); // 변경된 종속자 정보 직렬화
+                        }
                     }
                 }
-
                 customerUpdated = true;
                 break;
             case 4:
@@ -646,10 +580,10 @@ public class CustomerManagerImpl implements CustomerManager {
         }
 
         for (Customer customer : customers) {
-//            if(customer.getIsPolicyHolder() == true) {
+            if(customer.getIsPolicyHolder() == true) {
                 System.out.println(customer.toString()); // Customer 객체의 toString 메소드 호출
                 System.out.println("---------------------------------------");
-//            }
+            }
         }
     }
 
@@ -687,8 +621,13 @@ public class CustomerManagerImpl implements CustomerManager {
                         for (Claim claim : claims) {
                             System.out.println("\tClaim ID: " + claim.getId());
                             System.out.println("\tClaim Date: " + claim.getClaimDate());
+                            System.out.println("\tInsured person: " + claim.getInsuredPersonFullName());
+                            System.out.println("\tCard Number: " + dependent.getInsuranceCard().getCardNumber());
+                            System.out.println("\tExam Date: " + claim.getExamDate());
                             System.out.println("\tClaim Amount: " + claim.getClaimAmount());
                             System.out.println("\tClaim Status: " + claim.getStatus());
+                            System.out.println("\tReceiver Banking Info (Bank – Name – Number) : " + claim.getBankingInfo());
+
                             System.out.println("\t----------");
                         }
                     } else {

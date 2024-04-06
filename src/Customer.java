@@ -168,30 +168,6 @@ public class Customer implements Serializable {
     public void addDependent(Customer dependent) {
         this.dependents.add(dependent);
     }
-// Customer 클래스 내에 추가
-
-    public boolean hasDependent(String dependentId) {
-        if (dependents != null) {
-            for (Customer dependent : dependents) {
-                if (dependent.getId().equals(dependentId)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void updateDependent(Customer updatedDependent) {
-        if (dependents != null) {
-            for (int i = 0; i < dependents.size(); i++) {
-                Customer dependent = dependents.get(i);
-                if (dependent.getId().equals(updatedDependent.getId())) {
-                    dependents.set(i, updatedDependent);
-                    return;
-                }
-            }
-        }
-    }
 
     public String getDependentInfo() {
         String cardNumber = (insuranceCard != null) ? insuranceCard.getCardNumber() : "N/A";
