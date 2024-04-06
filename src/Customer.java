@@ -67,7 +67,6 @@ public class Customer implements Serializable {
         this.claims.add(claim);
     }
 
-    // 고객이 접수한 청구 정보를 반환하는 메소드
     public List<Claim> getClaims() {
         return this.claims;
     }
@@ -188,7 +187,7 @@ public class Customer implements Serializable {
                 .append("Policy Holder: ").append(isPolicyHolder ? "Yes" : "No").append("\n")
                 .append("Policy Owner: ").append(policyOwner).append("\n");
 
-        // 보험 카드 정보가 있는 경우
+        // If customers have insurance card information
         if (insuranceCard != null) {
             sb.append("InsuranceCard Number: ").append(insuranceCard.getCardNumber()).append("\n")
                     .append("Expiration Date: ").append(insuranceCard.getExpirationDate()).append("\n");
@@ -212,13 +211,13 @@ public class Customer implements Serializable {
             sb.append("No Claim Data.\n");
         }
 
-        // 종속자 정보는 Policy Holder일 경우에만 출력
+        // Dependent information is output only when Policy Holder
         if (isPolicyHolder && dependents != null && !dependents.isEmpty()) {
             sb.append("List of Dependents:\n");
             for (Customer dependent : dependents) {
                 sb.append("\tID: ").append(dependent.getId()).append("\n")
                         .append("\tDependent Full Name: ").append(dependent.getFullName()).append("\n")
-                        // 종속자의 보험 카드 번호 출력
+                        // The dependent's insurance card number output
                         .append("\tInsuranceCard Number: ").append(dependent.getInsuranceCard() != null ? dependent.getInsuranceCard().getCardNumber() : "정보 없음").append("\n\n");
             }
         }

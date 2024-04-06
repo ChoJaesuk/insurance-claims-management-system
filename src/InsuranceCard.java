@@ -81,12 +81,6 @@ public class InsuranceCard implements Serializable {
         return expirationDate;
     }
 
-    @Override
-    public String toString() {
-        return "InsuranceCard{" +
-                "cardNumber='" + cardNumber + '\'' +
-                '}';
-    }
 
 
 }

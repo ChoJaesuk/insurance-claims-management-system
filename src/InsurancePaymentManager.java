@@ -17,7 +17,7 @@ public class InsurancePaymentManager {
         System.out.println("Processing claims:");
         for (Claim claim : claims) {
             if ("Processing".equals(claim.getStatus())) {
-                System.out.println(claim); // 여기서 Claim 클래스에 toString 메서드가 오버라이드 되어 있다고 가정
+                System.out.println(claim);
             }
         }
 
@@ -37,15 +37,15 @@ public class InsurancePaymentManager {
 
                         if (proceed) {
                             claim.setStatus("Done");
-                            String cardNumber = customer.getInsuranceCard().getCardNumber(); // 여기서는 Customer 객체에서 InsuranceCard를 가져와 사용
-                            String documentName = String.format("%s_%s_\n" + "Insurance payment statement.pdf", claim.getId(), cardNumber);
+                            String cardNumber = customer.getInsuranceCard().getCardNumber();
+                            String documentName = String.format("%s_%s_" + "Insurancepaymentstatement.pdf", claim.getId(), cardNumber);
                             if (claim.getDocuments() == null) {
                                 claim.setDocuments(new ArrayList<>());
                             }
                             claim.getDocuments().add(documentName);
 
                             System.out.println("Payment has been processed successfully. Claim status updated to 'Done'.");
-                            serializeObject(claim, "claim/" + claim.getId() + ".txt");// 변경된 Claim 객체 리스트를 다시 직렬화하여 저장
+                            serializeObject(claim, "claim/" + claim.getId() + ".txt"); // Reserialize and save changed Claim object list
                             serializeObject(customer, "customer/" + customer.getId() + ".txt");
                             return;
                         } else {

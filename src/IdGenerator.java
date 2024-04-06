@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class IdGenerator {
 
-    // 고객 ID와 청구 ID의 중복을 확인하기 위해 기존 ID를 저장할 세트
+    // Set to store existing IDs to verify duplication of customer ID and billing ID
     private Set<String> existingCustomerIds = new HashSet<>();
     private Set<String> existingClaimIds = new HashSet<>();
 
@@ -18,10 +18,10 @@ public class IdGenerator {
     }
 
     private void loadExistingIds() {
-        // 고객 ID들 로드
+        // Load customer IDs
         loadIds("customer/", existingCustomerIds);
 
-        // 청구 ID들 로드
+        // Load Claims IDs
         loadIds("claim/", existingClaimIds);
     }
 
