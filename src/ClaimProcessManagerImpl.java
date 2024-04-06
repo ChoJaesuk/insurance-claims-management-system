@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import static src.CustomerManagerImpl.serializeObject;
 import static src.DeserializationHelper.deserializeCustomers;
 
 public class ClaimProcessManagerImpl implements ClaimProcessManager {
@@ -62,10 +61,10 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
             customer.getClaims().add(claim);
 
             // Serialize and store changed customer information
-            serializeObject(customer, "customer/" + customerId + ".txt");
+            SerializationUtils.serialize(customer, "customer/" + customerId + ".txt");
 
             // Serialize and store claim information
-            serializeObject(claim, "claim/" + claimId + ".txt");
+            SerializationUtils.serialize(claim, "claim/" + claimId + ".txt");
 
             System.out.println(customerId + "'s new claim has been successfully added.");
 
@@ -161,10 +160,10 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
         }
         if (changesMade) {
             // Reserial and save changed Claim information
-            serializeObject(claimToBeUpdated, "claim/" + claimToBeUpdated.getId() + ".txt");
+            SerializationUtils.serialize(claimToBeUpdated, "claim/" + claimToBeUpdated.getId() + ".txt");
 
             // Reserial and store changed customer information
-            serializeObject(customerToUpdate, "customer/" + customerToUpdate.getId() + ".txt");
+            SerializationUtils.serialize(customerToUpdate, "customer/" + customerToUpdate.getId() + ".txt");
 
             System.out.println("Claims and customer information have been successfully updated.");
         }
@@ -229,7 +228,7 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
             if (claimToDelete != null) {
                 // Claim has been successfully found and deleted
                 // Reserialize and save changed Customer objects
-                serializeObject(customerToUpdate, "customer/" + customerToUpdate.getId() + ".txt");
+                SerializationUtils.serialize(customerToUpdate, "customer/" + customerToUpdate.getId() + ".txt");
 
                 // Delete Clime's text file
                 File claimFile = new File("claim/" + claimId + ".txt");
@@ -373,16 +372,6 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
         }
 
         return claims;
-    }
-
-    private void serializeObject(Object obj, String filePath) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            oos.writeObject(obj);
-            System.out.println(obj.getClass().getSimpleName() + " has been saved to " + filePath);
-        } catch (IOException e) {
-            System.out.println("Error occurred during serialization.");
-            e.printStackTrace();
-        }
     }
 
     public void listCustomers() {

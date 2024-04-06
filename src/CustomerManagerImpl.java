@@ -45,8 +45,8 @@ public class CustomerManagerImpl implements CustomerManager {
         list.add(cus);
 
         // serialization
-        serializeObject(cus, "customer/" + cus.getId() + ".txt");
-        serializeObject(insuranceCard, "insuranceCard/" + insuranceCard.getCardNumber() + ".txt");
+        SerializationUtils.serialize(cus, "customer/" + cus.getId() + ".txt");
+        SerializationUtils.serialize(insuranceCard, "insuranceCard/" + insuranceCard.getCardNumber() + ".txt");
         System.out.println(fullName + "has been successfully registered.");
 
 
@@ -84,9 +84,9 @@ public class CustomerManagerImpl implements CustomerManager {
         policyHolder.getDependents().add(dependent);
 
         // Serialize changed PolicyHolder information
-        serializeObject(policyHolder, "customer/" + policyHolder.getId() + ".txt");
-        serializeObject(dependent, "customer/" + dependentId + ".txt");
-        serializeObject(dependentInsuranceCard, "insuranceCard/" + dependentInsuranceCard.getCardNumber() + ".txt");
+        SerializationUtils.serialize(policyHolder, "customer/" + policyHolder.getId() + ".txt");
+        SerializationUtils.serialize(dependent, "customer/" + dependentId + ".txt");
+        SerializationUtils.serialize(dependentInsuranceCard, "insuranceCard/" + dependentInsuranceCard.getCardNumber() + ".txt");
 
         System.out.println(dependentFullName + "has been successfully registered.");
     }
@@ -151,7 +151,7 @@ public class CustomerManagerImpl implements CustomerManager {
                     for (Customer dependent : customerToUpdate.getDependents()) {
                         if(dependent.getInsuranceCard() != null) {
                             dependent.getInsuranceCard().setExpirationDate(newExpirationDate); // 종속자의 보험 카드 만료 날짜 업데이트
-                            serializeObject(dependent, "customer/" + dependent.getId() + ".txt"); // 변경된 종속자 정보 직렬화
+                            SerializationUtils.serialize(dependent, "customer/" + dependent.getId() + ".txt"); // 변경된 종속자 정보 직렬화
                         }
                     }
                 }
@@ -175,7 +175,7 @@ public class CustomerManagerImpl implements CustomerManager {
         }
 
         if (customerUpdated) {
-            serializeObject(customerToUpdate, "customer/" + customerToUpdate.getId() + ".txt");
+            SerializationUtils.serialize(customerToUpdate, "customer/" + customerToUpdate.getId() + ".txt");
             System.out.println("Customer information has been successfully updated.");
             updateRelatedClaims(customerToUpdate);
         }
@@ -192,13 +192,13 @@ public class CustomerManagerImpl implements CustomerManager {
                 claim.getBankingInfo().setReceiverName(updatedCustomer.getFullName());
             }
             updatedClaims.add(claim); // Add to updated claims list
-            serializeObject(claim, "claim/" + claim.getId() + ".txt"); // Serialize and store updated claim information
+            SerializationUtils.serialize(claim, "claim/" + claim.getId() + ".txt"); // Serialize and store updated claim information
         }
 
         // Update claims list of customer objects to updated claims list
         updatedCustomer.setClaims(updatedClaims);
         // Reserial and store changed customer information
-        serializeObject(updatedCustomer, "customer/" + updatedCustomer.getId() + ".txt");
+        SerializationUtils.serialize(updatedCustomer, "customer/" + updatedCustomer.getId() + ".txt");
 
         System.out.println("All related claims have been updated with the customer's new information.");
     }
@@ -241,7 +241,7 @@ public class CustomerManagerImpl implements CustomerManager {
                     updateRelatedDependentClaims(dependentToUpdate);
 
                     // Serialize PolicyHolder objects reflecting changed information
-                    serializeObject(policyHolder, "customer/" + policyHolder.getId() + ".txt");
+                    SerializationUtils.serialize(policyHolder, "customer/" + policyHolder.getId() + ".txt");
 
                     updatePolicyHolderDependents(policyHolder, dependentToUpdate);
 
@@ -268,7 +268,7 @@ public class CustomerManagerImpl implements CustomerManager {
         policyHolder.setDependents(updatedDependents); // Set changed list to policyHolder
 
         // Reserial and save changed PolicyHolder objects
-        serializeObject(policyHolder, "customer/" + policyHolder.getId() + ".txt");
+        SerializationUtils.serialize(policyHolder, "customer/" + policyHolder.getId() + ".txt");
     }
     private void updateRelatedDependentClaims(Customer dependent) {
         List<Claim> updatedClaims = new ArrayList<>();
@@ -283,11 +283,11 @@ public class CustomerManagerImpl implements CustomerManager {
                 }
                 updatedClaims.add(claim); // Add updated claims to list
                 // Serialize and store updated claim information
-                serializeObject(claim, "claim/" + claim.getId() + ".txt");
+                SerializationUtils.serialize(claim, "claim/" + claim.getId() + ".txt");
             }
         }
         dependent.setClaims(updatedClaims); // Update claims list within dependent object
-        serializeObject(dependent, "customer/" + dependent.getId() + ".txt"); // Reserialize and save changed dependent objects
+        SerializationUtils.serialize(dependent, "customer/" + dependent.getId() + ".txt"); // Reserialize and save changed dependent objects
         System.out.println("All related claims for the dependent have been updated.");
     }
 
@@ -453,7 +453,7 @@ public class CustomerManagerImpl implements CustomerManager {
         policyHolder.getDependents().remove(dependentToDelete);
 
         // Serialize and store changed PolicyHolder information
-        serializeObject(policyHolder, "customer/" + policyHolder.getId() + ".txt");
+        SerializationUtils.serialize(policyHolder, "customer/" + policyHolder.getId() + ".txt");
         System.out.println(dependentId + " and associated files have been successfully deleted.");
     }
 
@@ -553,18 +553,6 @@ public class CustomerManagerImpl implements CustomerManager {
                 }
 
             }
-        }
-    }
-
-
-    // This method is a serialization method used to store all information as a text file.
-    public static void serializeObject(Object obj, String filePath) {
-        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            outputStream.writeObject(obj);
-            System.out.println(obj.getClass().getSimpleName() + " data saved to " + filePath);
-        } catch (IOException e) {
-            System.out.println("Error occurred while saving data to file: " + filePath);
-            e.printStackTrace();
         }
     }
 
