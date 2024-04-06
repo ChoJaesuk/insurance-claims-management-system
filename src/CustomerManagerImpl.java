@@ -103,52 +103,118 @@ public class CustomerManagerImpl implements CustomerManager {
         return null; // 찾지 못했으면 null 반환
     }
 
+//    @Override
+//    public void updateCustomer() {
+//
+//        listCustomersWithoutDependents();
+//
+//        System.out.println("Enter the Customer ID to update (NOT DEPENDENT)");
+//        String customerId = scan.next();
+//
+//        // 고객 찾기
+//        Customer customer = findCustomerById(customerId);
+//        if (customer == null) {
+//            System.out.println("There is no Customer with the ID you entered.");
+//            return;
+//        }
+//
+//        System.out.println("Please choose a option to update");
+//        System.out.println("## [1] Customer's ID  [2] Customer's Full Name [3] Customer's Expiration Date ##");
+//        System.out.println("## [4] Add Dependent [5] Delete Dependent [6] Update Dependent(ID, FullName) [7] 취소 ##");
+//        int choice = scan.nextInt();
+//        scan.nextLine(); // 숫자 입력 후 남은 줄바꿈 문자 제거
+//
+//        switch (choice) {
+//            case 1:
+//                System.out.println("Enter a NEW Customer's ID. :");
+//                String newId = scan.next();
+//                // 기존 파일 삭제 및 새로운 ID로 파일 이름 변경
+//                if (!customerId.equals(newId)) { // 새로운 ID가 기존 ID와 다를 경우에만 실행
+//                    renameCustomerFile(customerId, newId);
+//                    customer.setId(newId);
+//                }
+//                serializeObject(customer, "customer/" + customer.getId() + ".txt");
+//                break;
+//            case 2:
+//                System.out.println("Enter a NEW Customer's FullName. :");
+//                String newFullName = scan.next();
+//                customer.setFullName(newFullName);
+//                serializeObject(customer, "customer/" + customer.getId() + ".txt");
+//                break;
+//            case 3:
+//                System.out.println("Enter a NEW Customer's Expiration Date. : (ex : 2024-12-31):");
+//                String dateInput = scan.next();
+//                LocalDate newExpirationDate = LocalDate.parse(dateInput);
+//                customer.setExpirationDate(newExpirationDate);
+//                serializeObject(customer, "customer/" + customer.getId() + ".txt");
+//                break;
+//
+//            case 4:
+//                addDependent(customerId);
+//                break;
+//
+//            case 5:
+//                deleteDependent();
+//                break;
+//
+//            case 6:
+//                updateDependentInfo(customerId);
+//            default:
+//                System.out.println("Wrong Input!");
+//                return;
+//        }
+//
+//        // 업데이트된 고객 정보 직렬화
+//        System.out.println(customerId + "has been successfully updated.");
+//        updateClaimsForCustomer(customer);
+//    }
+
     @Override
     public void updateCustomer() {
-
         listCustomersWithoutDependents();
 
         System.out.println("Enter the Customer ID to update (NOT DEPENDENT)");
         String customerId = scan.next();
 
         // 고객 찾기
-        Customer customer = findCustomerById(customerId);
-        if (customer == null) {
+        Customer customerToUpdate = findCustomerById(customerId);
+        if (customerToUpdate == null) {
             System.out.println("There is no Customer with the ID you entered.");
             return;
         }
 
-        System.out.println("Please choose a option to update");
-        System.out.println("## [1] Customer's ID  [2] Customer's Full Name [3] Customer's Expiration Date ##");
+        System.out.println("Please choose an option to update");
+        System.out.println("## [1] Customer's ID [2] Customer's Full Name [3] Customer's Expiration Date ##");
         System.out.println("## [4] Add Dependent [5] Delete Dependent [6] Update Dependent(ID, FullName) [7] 취소 ##");
         int choice = scan.nextInt();
         scan.nextLine(); // 숫자 입력 후 남은 줄바꿈 문자 제거
+
+        boolean customerUpdated = false;
 
         switch (choice) {
             case 1:
                 System.out.println("Enter a NEW Customer's ID. :");
                 String newId = scan.next();
                 // 기존 파일 삭제 및 새로운 ID로 파일 이름 변경
-                if (!customerId.equals(newId)) { // 새로운 ID가 기존 ID와 다를 경우에만 실행
+                if (!customerId.equals(newId)) {
                     renameCustomerFile(customerId, newId);
-                    customer.setId(newId);
+                    customerToUpdate.setId(newId);
+                    customerUpdated = true;
                 }
-                serializeObject(customer, "customer/" + customer.getId() + ".txt");
                 break;
             case 2:
-                System.out.println("Enter a NEW Customer's FullName. :");
+                System.out.println("Enter a NEW Customer's Full Name. :");
                 String newFullName = scan.next();
-                customer.setFullName(newFullName);
-                serializeObject(customer, "customer/" + customer.getId() + ".txt");
+                customerToUpdate.setFullName(newFullName);
+                customerUpdated = true;
                 break;
             case 3:
                 System.out.println("Enter a NEW Customer's Expiration Date. : (ex : 2024-12-31):");
                 String dateInput = scan.next();
                 LocalDate newExpirationDate = LocalDate.parse(dateInput);
-                customer.setExpirationDate(newExpirationDate);
-                serializeObject(customer, "customer/" + customer.getId() + ".txt");
+                customerToUpdate.setExpirationDate(newExpirationDate);
+                customerUpdated = true;
                 break;
-
             case 4:
                 addDependent(customerId);
                 break;
@@ -162,11 +228,37 @@ public class CustomerManagerImpl implements CustomerManager {
             default:
                 System.out.println("Wrong Input!");
                 return;
+
         }
 
-        // 업데이트된 고객 정보 직렬화
-        System.out.println(customerId + "has been successfully updated.");
-        updateClaimsForCustomer(customer);
+        if (customerUpdated) {
+            serializeObject(customerToUpdate, "customer/" + customerToUpdate.getId() + ".txt");
+            System.out.println("Customer information has been successfully updated.");
+            updateRelatedClaims(customerToUpdate);
+        }
+    }
+
+    private void updateRelatedClaims(Customer updatedCustomer) {
+        List<Claim> updatedClaims = new ArrayList<>(); // 업데이트된 클레임을 저장할 리스트
+
+        for (Claim claim : updatedCustomer.getClaims()) {
+            // 고객 정보 업데이트에 따라 클레임 내의 관련 정보를 업데이트합니다.
+            claim.setInsuredPersonFullName(updatedCustomer.getFullName());
+
+            if (claim.getBankingInfo() != null) {
+                claim.getBankingInfo().setReceiverName(updatedCustomer.getFullName());
+            }
+            // 필요한 경우 추가 정보 업데이트
+            updatedClaims.add(claim); // 업데이트된 클레임 리스트에 추가
+            serializeObject(claim, "claim/" + claim.getId() + ".txt"); // 업데이트된 클레임 정보를 다시 직렬화하여 저장
+        }
+
+        // 고객 객체의 claims 리스트를 업데이트된 클레임 리스트로 갱신
+        updatedCustomer.setClaims(updatedClaims);
+        // 변경된 고객 정보를 다시 직렬화하여 저장
+        serializeObject(updatedCustomer, "customer/" + updatedCustomer.getId() + ".txt");
+
+        System.out.println("All related claims have been updated with the customer's new information.");
     }
 
     private void updateDependentInfo(String customerId) {
@@ -216,24 +308,6 @@ public class CustomerManagerImpl implements CustomerManager {
             System.out.println("You can not update dependent's information.");
         }
     }
-
-    private void updateClaimsForCustomer(Customer customer) {
-        List<Claim> claims = deserializeClaims(); // 모든 Claim 역직렬화
-        boolean changesMade = false;
-
-        for (Claim claim : claims) {
-            if (claim.getInsuredPersonId().equals(customer.getId())) {
-                claim.setInsuredPersonFullName(customer.getFullName()); // 고객 이름 업데이트
-                serializeObject(claim, "claim/" + claim.getId() + ".txt"); // 업데이트된 Claim 직렬화하여 저장
-                changesMade = true;
-            }
-        }
-
-        if (changesMade) {
-            System.out.println("Related claims have been updated with the new customer information.");
-        }
-    }
-
     private void renameCustomerFile(String oldId, String newId) {
         File oldFile = new File("customer/" + oldId + ".txt");
         File newFile = new File("customer/" + newId + ".txt");

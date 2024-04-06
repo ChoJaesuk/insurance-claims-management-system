@@ -51,8 +51,8 @@ public class Claim implements Serializable {
         this.id = claimId;
         this.claimDate = claimDate;
         this.insuredPersonId = customerId;
-        this.insuranceCard = cardNumber;
         this.insuredPersonFullName = insuredPersonFullName;
+        this.insuranceCard = cardNumber;
         this.examDate = examDate;
         this.claimAmount = claimAmount;
         this.status = "New"; // status 초기화
@@ -151,7 +151,7 @@ public class Claim implements Serializable {
         return insuredPersonFullName;
     }
 
-    public void setInsuredPersonFullName(String InsuredPersonFullName) {
+    public void setInsuredPersonFullName(String insuredPersonFullName) {
         this.insuredPersonFullName = insuredPersonFullName;
     }
 
