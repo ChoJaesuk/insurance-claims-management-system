@@ -204,67 +204,6 @@ public class CustomerManagerImpl implements CustomerManager {
         System.out.println("All related claims have been updated with the customer's new information.");
     }
 
-//    private void updateDependentInfo(String customerId) {
-//        Customer policyHolder = findCustomerById(customerId);
-//        if (policyHolder != null && policyHolder.getDependents() != null) {
-//            System.out.println("List of" + customerId + "dependents:");
-//
-//            // 모든 종속자 정보 출력
-//            for (Customer dependent : policyHolder.getDependents()) {
-//                System.out.println("Dependent ID: " + dependent.getId() + ", Dependent Full Name: " + dependent.getFullName());
-//            }
-//            System.out.println("\nEnter a Dependent ID to update");
-//            String dependentId = scan.next();
-//            for (Customer dependent : policyHolder.getDependents()) {
-//                if (dependent.getId().equals(dependentId)) {
-//                    System.out.println("Plase choose a option to update");
-//                    System.out.println(" [1] Dependent's ID [2] Dependent's Full Name");
-//                    int choice = scan.nextInt();
-//                    scan.nextLine(); // 숫자 입력 후 남은 줄바꿈 문자 제거
-//
-//                    switch (choice) {
-//                        case 1:
-//                            System.out.println("Enter a new Dependent's ID : ");
-//                            String newId = scan.next();
-//                            dependent.setId(newId);
-//                            renameCustomerFile(dependentId, newId);
-//                            break;
-//                        case 2:
-//                            System.out.println("Enter a new Dependent's Full Name : ");
-//                            String newName = scan.next();
-//                            dependent.setFullName(newName);
-//                            updateDependentClaims(dependent, dependent.getClaims());
-//                            break;
-//                        default:
-//                            System.out.println("Wrong Input!");
-//                            return;
-//                    }
-//
-//                    // 변경된 정보를 반영하여 PolicyHolder 객체 직렬화
-//                    serializeObject(policyHolder, "customer/" + policyHolder.getId() + ".txt");
-//                    serializeObject(dependent, "customer/" + dependentId + ".txt");
-//                    System.out.println(dependentId + "has been successfully updated.");
-//                    return;
-//                }
-//            }
-//            System.out.println("There is no Dependent with the ID you entered.");
-//        } else {
-//            System.out.println("You can not update dependent's information.");
-//        }
-//    }
-
-//    private void updateDependentClaims(Customer dependent, List<Claim> claims) {
-//        // Dependent와 관련된 Claim 정보를 업데이트하는 로직
-//        // 예를 들어, dependent의 이름이 바뀌었다면, 해당 dependent에 관련된 모든 Claim의 insuredPersonFullName을 업데이트합니다.
-//        for (Claim claim : claims) {
-//            if (claim.getInsuredPersonId().equals(dependent.getId())) {
-//                claim.setInsuredPersonFullName(dependent.getFullName());
-//                serializeObject(claim, "claim/" + claim.getId() + ".txt");
-//            }
-//        }
-//    }
-
-
     private void updateDependentInfo(String customerId) {
         Customer policyHolder = findCustomerById(customerId);
         if (policyHolder != null && policyHolder.getDependents() != null) {
