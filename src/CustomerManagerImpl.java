@@ -228,7 +228,7 @@ public class CustomerManagerImpl implements CustomerManager {
                 break;
 
             case 5:
-                deleteDependent();
+                deleteDependent(customerId);
                 break;
 
             case 6:
@@ -433,6 +433,9 @@ public class CustomerManagerImpl implements CustomerManager {
     @Override
     public void deleteCustomer() {
         List<Customer> customers = deserializeCustomers();
+
+        listCustomersWithoutDependents();
+
         System.out.println("Enter the Customer's ID to delete");
         String id = scan.next();
 
@@ -529,15 +532,18 @@ public class CustomerManagerImpl implements CustomerManager {
         return claim; // 역직렬화된 Claim 객체 반환
     }
 
-    public void deleteDependent() {
-        System.out.println("Please enter the ID of the customer (Policy Holder) to delete the dependent :");
-        String policyHolderId = scan.next();
-
+    public void deleteDependent(String policyHolderId) {
         // PolicyHolder 찾기
         Customer policyHolder = findCustomerById(policyHolderId);
         if (policyHolder == null || policyHolder.getDependents() == null || policyHolder.getDependents().isEmpty()) {
             System.out.println("There is no Customer with the ID you entered or the Customer does not have dependents.");
             return;
+        }
+        if (policyHolder != null && policyHolder.getDependents() != null) {
+            System.out.println("List of " + policyHolderId + " dependents:");
+            for (Customer dependent : policyHolder.getDependents()) {
+                System.out.println("Dependent ID: " + dependent.getId() + ", Dependent Full Name: " + dependent.getFullName());
+            }
         }
 
         System.out.println("Enter the Dependent ID to delete");
@@ -553,6 +559,9 @@ public class CustomerManagerImpl implements CustomerManager {
             System.out.println("There is no Dependent with the ID you entered.");
             return;
         }
+
+        // 종속자가 신청한 청구 정보 삭제
+        deleteClaimsForDependent(dependentId);
 
         // 종속자와 관련된 파일 삭제
         deleteFile("customer/" + dependentId + ".txt"); // 종속자 파일 삭제
@@ -570,14 +579,34 @@ public class CustomerManagerImpl implements CustomerManager {
         System.out.println(dependentId + " and associated files have been successfully deleted.");
     }
 
+    private void deleteClaimsForDependent(String dependentId) {
+        File claimDirectory = new File("claim/");
+        if (claimDirectory.exists() && claimDirectory.isDirectory()) {
+            File[] claimFiles = claimDirectory.listFiles();
+            if (claimFiles != null) {
+                for (File claimFile : claimFiles) {
+                    Claim claim = deserializeClaimFromFile(claimFile);
+                    if (claim != null && claim.getInsuredPersonId().equals(dependentId)) {
+                        if (claimFile.delete()) {
+                            System.out.println("Deleted claim file: " + claimFile.getName());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void deleteFile(String filePath) {
         File fileToDelete = new File(filePath);
         if (fileToDelete.exists() && fileToDelete.delete()) {
             System.out.println("Deleted file: " + filePath);
         } else {
-            System.out.println("Failed to delete file or file does not exist: " + filePath);
+            System.out.println("Failed to delete file: " + filePath);
         }
     }
+
+// Assume deserializeClaimFromFile method is implemented as previously described.
+
 
     @Override
     public void getCustomerById() {
