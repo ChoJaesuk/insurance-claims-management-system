@@ -33,18 +33,18 @@ public class CustomerManagerImpl implements CustomerManager {
         System.out.println("Enter customer's Policy owner");
         String policyOwner = scan.next();
 
-        // 보험 카드 생성
+        // Create an Insurance Card
         String cardNumber = insuranceCard2.generateRandomCardNumber(); // 중복 검사를 포함한 카드 번호 생성
         InsuranceCard insuranceCard = new InsuranceCard(cardNumber);
         insuranceCard.setCardInfo(fullName, policyOwner, expirationDate);
 
-        // 고객 객체 생성
+        // Create Customer Object
         Customer cus = new Customer(id, fullName, answer, policyOwner, expirationDate, insuranceCard);
 
-        // 고객 리스트에 추가
+        // Add the customer list
         list.add(cus);
 
-        // 직렬화
+        // serialization
         serializeObject(cus, "customer/" + cus.getId() + ".txt");
         serializeObject(insuranceCard, "insuranceCard/" + insuranceCard.getCardNumber() + ".txt");
         System.out.println(fullName + "has been successfully registered.");
@@ -57,14 +57,14 @@ public class CustomerManagerImpl implements CustomerManager {
         InsuranceCard insuranceCard2 = new InsuranceCard();
         IdGenerator idGenerator = new IdGenerator();
 
-        // PolicyHolder 찾기
+        // to find PolicyHolder
         Customer policyHolder = findCustomerById(policyHolderId);
         if (policyHolder == null) {
             System.out.println("There is no PolicyHolder with the ID you entered.");
             return;
         }
 
-        // Dependent 정보 입력 받기
+        // Get Dependent information input
         String dependentId = idGenerator.generateCustomerId();
 
         System.out.println("Enter the dependent's Full Name");
@@ -74,16 +74,16 @@ public class CustomerManagerImpl implements CustomerManager {
         InsuranceCard dependentInsuranceCard = new InsuranceCard(cardNumber);
         dependentInsuranceCard.setCardInfo(dependentFullName, policyHolder.getPolicyOwner(), policyHolder.getInsuranceCard().getExpirationDate());
 
-        // Dependent 객체 생성
+        // Create a Dependent Object
         Customer dependent = new Customer(dependentId, dependentFullName, false, policyHolder.getPolicyOwner(), policyHolder.getExpirationDate(), dependentInsuranceCard);
 
-        // PolicyHolder의 dependents 리스트에 추가
+        // Add to policyholder's dependents list
         if (policyHolder.getDependents() == null) {
             policyHolder.setDependents(new ArrayList<>());
         }
         policyHolder.getDependents().add(dependent);
 
-        // 변경된 PolicyHolder 정보 직렬화
+        // Serialize changed PolicyHolder information
         serializeObject(policyHolder, "customer/" + policyHolder.getId() + ".txt");
         serializeObject(dependent, "customer/" + dependentId + ".txt");
         serializeObject(dependentInsuranceCard, "insuranceCard/" + dependentInsuranceCard.getCardNumber() + ".txt");
@@ -92,15 +92,15 @@ public class CustomerManagerImpl implements CustomerManager {
     }
 
     private Customer findCustomerById(String customerId) {
-        // 이 메소드는 deserializeCustomers를 사용하여 모든 고객을 가져오고,
-        // 주어진 customerId와 일치하는 Customer 객체를 찾아 반환합니다.
-        List<Customer> customers = deserializeCustomers(); // 가정: 이 메소드가 시스템의 모든 고객을 역직렬화하여 반환
+        // This method uses deserializeCustomers to bring all customers,
+        // Finds and returns a Customer object that matches the given CustomerId.
+        List<Customer> customers = deserializeCustomers();
         for (Customer customer : customers) {
             if (customer.getId().equals(customerId)) {
                 return customer;
             }
         }
-        return null; // 찾지 못했으면 null 반환
+        return null; // return null if not found
     }
 
     @Override
@@ -110,7 +110,7 @@ public class CustomerManagerImpl implements CustomerManager {
         System.out.println("Enter the Customer ID to update (NOT DEPENDENT)");
         String customerId = scan.next();
 
-        // 고객 찾기
+        // Find a customer
         Customer customerToUpdate = findCustomerById(customerId);
         if (customerToUpdate == null) {
             System.out.println("There is no Customer with the ID you entered.");
@@ -121,7 +121,7 @@ public class CustomerManagerImpl implements CustomerManager {
         System.out.println("## [1] Customer's ID [2] Customer's Full Name [3] Customer's Expiration Date ##");
         System.out.println("## [4] Add Dependent [5] Delete Dependent [6] Update Dependent(ID, FullName) [7] 취소 ##");
         int choice = scan.nextInt();
-        scan.nextLine(); // 숫자 입력 후 남은 줄바꿈 문자 제거
+        scan.nextLine(); // Remove remaining line change characters after entering numbers
 
         boolean customerUpdated = false;
 
@@ -129,7 +129,7 @@ public class CustomerManagerImpl implements CustomerManager {
             case 1:
                 System.out.println("Enter a NEW Customer's ID. :");
                 String newId = scan.next();
-                // 기존 파일 삭제 및 새로운 ID로 파일 이름 변경
+                // Delete existing files and rename files with new IDs
                 if (!customerId.equals(newId)) {
                     renameCustomerFile(customerId, newId);
                     customerToUpdate.setId(newId);
@@ -146,7 +146,7 @@ public class CustomerManagerImpl implements CustomerManager {
                 System.out.println("Enter a NEW Customer's Expiration Date. : (ex : 2024-12-31):");
                 String dateInput = scan.next();
                 LocalDate newExpirationDate = LocalDate.parse(dateInput);
-                customerToUpdate.getInsuranceCard().setExpirationDate(newExpirationDate); // 고객의 보험 카드 만료 날짜 업데이트
+                customerToUpdate.getInsuranceCard().setExpirationDate(newExpirationDate); // Update customer's insurance card expiration date
                 if (customerToUpdate.getDependents() != null) {
                     for (Customer dependent : customerToUpdate.getDependents()) {
                         if(dependent.getInsuranceCard() != null) {
@@ -182,23 +182,22 @@ public class CustomerManagerImpl implements CustomerManager {
     }
 
     private void updateRelatedClaims(Customer updatedCustomer) {
-        List<Claim> updatedClaims = new ArrayList<>(); // 업데이트된 클레임을 저장할 리스트
+        List<Claim> updatedClaims = new ArrayList<>(); // List to store updated claims
 
         for (Claim claim : updatedCustomer.getClaims()) {
-            // 고객 정보 업데이트에 따라 클레임 내의 관련 정보를 업데이트합니다.
+            // Update the relevant information within the claim according to the customer information update.
             claim.setInsuredPersonFullName(updatedCustomer.getFullName());
 
             if (claim.getBankingInfo() != null) {
                 claim.getBankingInfo().setReceiverName(updatedCustomer.getFullName());
             }
-            // 필요한 경우 추가 정보 업데이트
-            updatedClaims.add(claim); // 업데이트된 클레임 리스트에 추가
-            serializeObject(claim, "claim/" + claim.getId() + ".txt"); // 업데이트된 클레임 정보를 다시 직렬화하여 저장
+            updatedClaims.add(claim); // Add to updated claims list
+            serializeObject(claim, "claim/" + claim.getId() + ".txt"); // Serialize and store updated claim information
         }
 
-        // 고객 객체의 claims 리스트를 업데이트된 클레임 리스트로 갱신
+        // Update claims list of customer objects to updated claims list
         updatedCustomer.setClaims(updatedClaims);
-        // 변경된 고객 정보를 다시 직렬화하여 저장
+        // Reserial and store changed customer information
         serializeObject(updatedCustomer, "customer/" + updatedCustomer.getId() + ".txt");
 
         System.out.println("All related claims have been updated with the customer's new information.");
@@ -230,7 +229,7 @@ public class CustomerManagerImpl implements CustomerManager {
             System.out.println("Please choose an option to update:");
             System.out.println(" [1] Dependent's Full Name");
             int choice = scan.nextInt();
-            scan.nextLine(); // 숫자 입력 후 남은 줄바꿈 문자 제거
+            scan.nextLine();
 
             switch (choice) {
                 case 1:
@@ -238,21 +237,18 @@ public class CustomerManagerImpl implements CustomerManager {
                     String newName = scan.nextLine();
                     dependentToUpdate.setFullName(newName);
 
-                    // 여기서 dependent와 관련된 모든 claims 업데이트
+                    // Update all claims related to dependents here
                     updateRelatedDependentClaims(dependentToUpdate);
 
-                    // 변경된 정보를 반영하여 PolicyHolder 객체 직렬화
+                    // Serialize PolicyHolder objects reflecting changed information
                     serializeObject(policyHolder, "customer/" + policyHolder.getId() + ".txt");
 
-                    // 여기서는 dependent 객체를 다시 PolicyHolder의 dependents 리스트에 업데이트 해주는 로직이 필요합니다.
-                    // 이 부분은 직접적으로 코드를 수정하지 않고, 로직의 필요성만 언급합니다.
                     updatePolicyHolderDependents(policyHolder, dependentToUpdate);
 
                     System.out.println("Dependent's information has been successfully updated.");
                     break;
                 default:
                     System.out.println("Wrong Input!");
-                    return;
             }
 
         } else {
@@ -260,23 +256,23 @@ public class CustomerManagerImpl implements CustomerManager {
         }
     }
     private void updatePolicyHolderDependents(Customer policyHolder, Customer updatedDependent) {
-        // PolicyHolder 내의 dependents 리스트를 업데이트합니다.
+        // Update the list of dependents in the PolicyHolder.
         List<Customer> updatedDependents = new ArrayList<>();
         for (Customer dependent : policyHolder.getDependents()) {
             if (dependent.getId().equals(updatedDependent.getId())) {
-                updatedDependents.add(updatedDependent); // 변경된 dependent 추가
+                updatedDependents.add(updatedDependent); // Add changed dependents
             } else {
                 updatedDependents.add(dependent);
             }
         }
-        policyHolder.setDependents(updatedDependents); // 변경된 리스트를 policyHolder에 설정
+        policyHolder.setDependents(updatedDependents); // Set changed list to policyHolder
 
-        // 변경된 PolicyHolder 객체를 다시 직렬화하여 저장
+        // Reserial and save changed PolicyHolder objects
         serializeObject(policyHolder, "customer/" + policyHolder.getId() + ".txt");
     }
     private void updateRelatedDependentClaims(Customer dependent) {
         List<Claim> updatedClaims = new ArrayList<>();
-        List<Claim> allClaims = deserializeClaims(); // 모든 클레임 정보를 역직렬화하여 불러옵니다.
+        List<Claim> allClaims = deserializeClaims(); // Recall all claim information in a de-serialized manner.
 
         for (Claim claim : allClaims) {
             if (claim.getInsuredPersonId().equals(dependent.getId())) {
@@ -285,13 +281,13 @@ public class CustomerManagerImpl implements CustomerManager {
                 if (claim.getBankingInfo() != null) {
                     claim.getBankingInfo().setReceiverName(dependent.getFullName());
                 }
-                updatedClaims.add(claim); // 업데이트된 클레임을 리스트에 추가
-                // 업데이트된 클레임 정보를 다시 직렬화하여 저장
+                updatedClaims.add(claim); // Add updated claims to list
+                // Serialize and store updated claim information
                 serializeObject(claim, "claim/" + claim.getId() + ".txt");
             }
         }
-        dependent.setClaims(updatedClaims); // dependent 객체 내의 claims 리스트를 업데이트
-        serializeObject(dependent, "customer/" + dependent.getId() + ".txt"); // 변경된 dependent 객체를 다시 직렬화하여 저장
+        dependent.setClaims(updatedClaims); // Update claims list within dependent object
+        serializeObject(dependent, "customer/" + dependent.getId() + ".txt"); // Reserialize and save changed dependent objects
         System.out.println("All related claims for the dependent have been updated.");
     }
 
@@ -301,16 +297,17 @@ public class CustomerManagerImpl implements CustomerManager {
         File newFile = new File("customer/" + newId + ".txt");
         if (oldFile.exists()) {
             if (oldFile.renameTo(newFile)) {
-                System.out.println("파일 이름이 성공적으로 변경되었습니다.");
+                System.out.println("The file name has been changed successfully.");
             } else {
-                System.out.println("파일 이름 변경에 실패하였습니다.");
+                System.out.println("Failed to rename file.");
             }
         } else {
-            System.out.println("변경할 파일이 존재하지 않습니다.");
+            System.out.println("No file exists to change.");
         }
     }
 
-
+    //In this method, when you delete a customer by deleting a customer,
+    // all of the Depent, InsuranceCard, and Claim associated with that customer are deleted.
     @Override
     public void deleteCustomer() {
         List<Customer> customers = deserializeCustomers();
@@ -333,7 +330,7 @@ public class CustomerManagerImpl implements CustomerManager {
             return;
         }
 
-        // 고객 및 종속자의 Claim 파일 삭제
+        // Delete Claim files for customers and dependents
         deleteClaimsForCustomer(id);
         if (customerToDelete.getDependents() != null) {
             for (Customer dependent : customerToDelete.getDependents()) {
@@ -341,7 +338,7 @@ public class CustomerManagerImpl implements CustomerManager {
             }
         }
 
-        // Customer의 Dependent 정보 삭제
+        // Delete Customer's Dependents information
         if (customerToDelete.getDependents() != null && !customerToDelete.getDependents().isEmpty()) {
             for (Customer dependent : customerToDelete.getDependents()) {
                 File dependentFile = new File("customer/" + dependent.getId() + ".txt");
@@ -360,7 +357,7 @@ public class CustomerManagerImpl implements CustomerManager {
             }
         }
 
-        // Customer(policyHolder) 정보 삭제
+        // Delete Customer(policyHolder) information
         customers.remove(customerToDelete);
         File customerFile = new File("customer/" + id + ".txt");
         if (customerFile.exists()) {
@@ -368,7 +365,7 @@ public class CustomerManagerImpl implements CustomerManager {
             System.out.println("Customer " + id + " file deleted.");
         }
 
-        // Customer의 보험 카드 파일 삭제
+        // Delete Customer's Insurance Card File
         if (customerToDelete.getInsuranceCard() != null) {
             File insuranceCardFile = new File("insuranceCard/" + customerToDelete.getInsuranceCard().getCardNumber() + ".txt");
             if (insuranceCardFile.exists()) {
@@ -377,20 +374,21 @@ public class CustomerManagerImpl implements CustomerManager {
             }
         }
 
-        // 변경된 고객 목록을 다시 직렬화하여 저장
+        // Reserial and save changed customer lists
         System.out.println(id + " has been successfully deleted.");
     }
 
+    // Method for deleting claims of customers that you want to delete.
     private void deleteClaimsForCustomer(String customerId) {
         File claimDirectory = new File("claim/");
         if (claimDirectory.exists() && claimDirectory.isDirectory()) {
             File[] claimFiles = claimDirectory.listFiles();
             if (claimFiles != null) {
                 for (File claimFile : claimFiles) {
-                    // Claim 객체 역직렬화
+                    // Re-serialize Clim objects
                     Claim claim = deserializeClaimFromFile(claimFile);
                     if (claim != null && claim.getInsuredPersonId().equals(customerId)) {
-                        // 해당하는 Claim 파일 삭제
+                        // Delete the corresponding Claim file
                         claimFile.delete();
                         System.out.println("Claim file " + claimFile.getName() + " deleted.");
                     }
@@ -402,19 +400,18 @@ public class CustomerManagerImpl implements CustomerManager {
     private static Claim deserializeClaimFromFile(File claimFile) {
         Claim claim = null; // 초기화
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(claimFile))) {
-            claim = (Claim) inputStream.readObject(); // Claim 객체 역직렬화
+            claim = (Claim) inputStream.readObject(); // Re-serialize Claim objects
         } catch (EOFException e) {
-            // 파일 끝에 도달한 경우, 이 예외 처리는 선택적일 수 있음
-            // 이 예외가 예상된 흐름이라면, 추가 처리가 필요 없을 수 있습니다.
+
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Error occurred while reading claim data from file: " + claimFile.getName());
             e.printStackTrace();
         }
-        return claim; // 역직렬화된 Claim 객체 반환
+        return claim; // Returning a Re-Serialized Claim Object
     }
 
     public void deleteDependent(String policyHolderId) {
-        // PolicyHolder 찾기
+        // to find a PolicyHolder
         Customer policyHolder = findCustomerById(policyHolderId);
         if (policyHolder == null || policyHolder.getDependents() == null || policyHolder.getDependents().isEmpty()) {
             System.out.println("There is no Customer with the ID you entered or the Customer does not have dependents.");
@@ -430,7 +427,7 @@ public class CustomerManagerImpl implements CustomerManager {
         System.out.println("Enter the Dependent ID to delete");
         String dependentId = scan.next();
 
-        // 종속자 목록에서 삭제할 종속자 찾기
+        // Find dependents to delete from the dependents list
         Customer dependentToDelete = policyHolder.getDependents().stream()
                 .filter(dependent -> dependent.getId().equals(dependentId))
                 .findFirst()
@@ -441,25 +438,27 @@ public class CustomerManagerImpl implements CustomerManager {
             return;
         }
 
-        // 종속자가 신청한 청구 정보 삭제
+        // Delete the claim information requested by the subordinate
         deleteClaimsForDependent(dependentId);
 
-        // 종속자와 관련된 파일 삭제
-        deleteFile("customer/" + dependentId + ".txt"); // 종속자 파일 삭제
+        // Delete files related to dependents
+        deleteFile("customer/" + dependentId + ".txt");
 
         if (dependentToDelete.getInsuranceCard() != null) {
             String cardNumber = dependentToDelete.getInsuranceCard().getCardNumber();
-            deleteFile("insuranceCard/" + cardNumber + ".txt"); // 보험 카드 파일 삭제
+            deleteFile("insuranceCard/" + cardNumber + ".txt"); // Delete Insurance Card Files
         }
 
-        // 종속자 목록에서 삭제
+        // Delete from Dependents list
         policyHolder.getDependents().remove(dependentToDelete);
 
-        // 변경된 PolicyHolder 정보 직렬화하여 저장
+        // Serialize and store changed PolicyHolder information
         serializeObject(policyHolder, "customer/" + policyHolder.getId() + ".txt");
         System.out.println(dependentId + " and associated files have been successfully deleted.");
     }
 
+
+    // This method is to delete the claim of the dependent that you delete.
     private void deleteClaimsForDependent(String dependentId) {
         File claimDirectory = new File("claim/");
         if (claimDirectory.exists() && claimDirectory.isDirectory()) {
@@ -477,6 +476,7 @@ public class CustomerManagerImpl implements CustomerManager {
         }
     }
 
+    // A method of deleting a file according to the path of the file.
     private void deleteFile(String filePath) {
         File fileToDelete = new File(filePath);
         if (fileToDelete.exists() && fileToDelete.delete()) {
@@ -486,12 +486,9 @@ public class CustomerManagerImpl implements CustomerManager {
         }
     }
 
-// Assume deserializeClaimFromFile method is implemented as previously described.
-
 
     @Override
     public void getCustomerById() {
-        // 이름을 입력받아 해당 회원의 나이와 전화번호 출력하기
 
         List<Customer> customers = deserializeCustomers();
         listCustomers();
@@ -511,7 +508,7 @@ public class CustomerManagerImpl implements CustomerManager {
 
 
     public void getAllCustomers() {
-        List<Customer> customers = deserializeCustomers(); // 시스템의 모든 고객을 불러옵니다.
+        List<Customer> customers = deserializeCustomers(); // Bring up all customers in the system.
 
         if (customers.isEmpty()) {
             System.out.println("There is no Customers in our system.");
@@ -519,10 +516,10 @@ public class CustomerManagerImpl implements CustomerManager {
         }
 
         for (Customer customer : customers) {
-            if(customer.getIsPolicyHolder() == true) {
-                System.out.println(customer.toString()); // Customer 객체의 toString 메소드 호출
+//            if(customer.getIsPolicyHolder() == true) {
+                System.out.println(customer.toString());
                 System.out.println("---------------------------------------");
-            }
+//            }
         }
     }
 
@@ -530,7 +527,7 @@ public class CustomerManagerImpl implements CustomerManager {
 
     @Override
     public void getAllDependents() {
-        List<Customer> customers = deserializeCustomers(); // 시스템의 모든 고객을 불러옵니다.
+        List<Customer> customers = deserializeCustomers();
 
         if (customers.isEmpty()) {
             System.out.println("There is no Dependents in our system.");
@@ -540,7 +537,7 @@ public class CustomerManagerImpl implements CustomerManager {
         System.out.println("Information for all dependents stored on the system : ");
 
         for (Customer policyHolder : customers) {
-            // 종속자가 있는 경우에만 출력
+            // Output only if there is a dependent
             if (policyHolder.getDependents() != null && !policyHolder.getDependents().isEmpty()) {
                 for (Customer dependent : policyHolder.getDependents()) {
                     System.out.println("Dependent ID: " + dependent.getId());
@@ -553,26 +550,6 @@ public class CustomerManagerImpl implements CustomerManager {
                     } else {
                         System.out.println("No Insurance CardNumber");
                     }
-                    // dependent의 청구 목록 출력
-                    List<Claim> claims = dependent.getClaims();
-                    if (claims != null && !claims.isEmpty()) {
-                        System.out.println("Claims for Dependent: ");
-                        for (Claim claim : claims) {
-                            System.out.println("\tClaim ID: " + claim.getId());
-                            System.out.println("\tClaim Date: " + claim.getClaimDate());
-                            System.out.println("\tInsured person: " + claim.getInsuredPersonFullName());
-                            System.out.println("\tCard Number: " + dependent.getInsuranceCard().getCardNumber());
-                            System.out.println("\tExam Date: " + claim.getExamDate());
-                            System.out.println("\tClaim Amount: " + claim.getClaimAmount());
-                            System.out.println("\tClaim Status: " + claim.getStatus());
-                            System.out.println("\tReceiver Banking Info (Bank – Name – Number) : " + claim.getBankingInfo());
-
-                            System.out.println("\t----------");
-                        }
-                    } else {
-                        System.out.println("No Claims for Dependent.");
-                    }
-                    System.out.println("---------------------------------------");
                 }
 
             }
@@ -580,6 +557,7 @@ public class CustomerManagerImpl implements CustomerManager {
     }
 
 
+    // This method is a serialization method used to store all information as a text file.
     public static void serializeObject(Object obj, String filePath) {
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
             outputStream.writeObject(obj);
@@ -589,6 +567,9 @@ public class CustomerManagerImpl implements CustomerManager {
             e.printStackTrace();
         }
     }
+
+
+    // This method outputs the customer's ID and name for a comfortable UI.
     public void listCustomers() {
         List<Customer> customers = deserializeCustomers();
         System.out.println("-------------- All Customers --------------");
@@ -597,6 +578,7 @@ public class CustomerManagerImpl implements CustomerManager {
         }
     }
 
+    // This method outputs the customer's ID and name for a comfortable UI.
     public void listCustomersWithoutDependents() {
         List<Customer> customers = deserializeCustomers();
         System.out.println("-------------- All Customers --------------");

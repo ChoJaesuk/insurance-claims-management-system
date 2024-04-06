@@ -205,7 +205,7 @@ public class Customer implements Serializable {
                         .append("\tCard number: ").append(insuranceCard.getCardNumber()).append("\n")
                         .append("\tExam Date: ").append(claim.getExamDate()).append("\n")
                         .append("\tClaim Amount: ").append(claim.getClaimAmount()).append("\n")
-                        .append("\tReceiver Banking Info: ").append(claim.getBankingInfo().toString()).append("\n\n")
+                        .append("\tReceiver Banking Info: ").append(claim.getBankingInfo().toString()).append("\n")
                         .append("\tStatus: ").append(claim.getStatus()).append("\n");
             }
         } else {
