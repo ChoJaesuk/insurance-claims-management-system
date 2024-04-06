@@ -273,12 +273,12 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
     public void getDocumentsList() {
         List<Claim> claims = deserializeClaims();
 
-        for(Claim claim : claims) {
+        for (Claim claim : claims) {
+            if (claim.getDocuments() != null && !claim.getDocuments().isEmpty()) { // 문서 목록이 null이 아니고, 비어 있지 않은 경우에만 출력
+                System.out.println(claim.getDocuments());
+            }
 
-            System.out.println(claim.getDocuments());
         }
-
-
     }
 
     @Override
@@ -395,9 +395,20 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
 
     public void listClaims() {
         List<Claim> claims = deserializeClaims();
+        int maxNameLength = 0;
+
+        // Find the length of the longest customer name
+        for (Claim claim : claims) {
+            if (claim.getInsuredPersonFullName().length() > maxNameLength) {
+                maxNameLength = claim.getInsuredPersonFullName().length();
+            }
+        }
+
         System.out.println("-------------- All Claims --------------");
-        for(Claim claim : claims) {
-            System.out.println("Claim ID : " + claim.getId() + "\tClaim Name : " + claim.getInsuredPersonFullName());
+        for (Claim claim : claims) {
+            // Set the output format using String.format()
+            System.out.printf("Claim ID : %s\tClaim Name : %-" + maxNameLength + "s Claim Status : %s%n",
+                    claim.getId(), claim.getInsuredPersonFullName(), claim.getStatus());
         }
     }
 

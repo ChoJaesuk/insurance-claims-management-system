@@ -24,41 +24,48 @@ public class InsurancePaymentManager {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the ID of the claim to pay:");
         String selectedClaimId = scanner.nextLine();
+        boolean claimFound = false; // 청구를 찾았는지 확인하는 플래그
 
         for(Customer customer : customers) {
             for (Claim claim : customer.getClaims()) {
-                if (claim.getId().equals(selectedClaimId) && "Processing".equals(claim.getStatus())) {
-                    System.out.println("Enter the insured Person's Name");
-                    String insuredPersonName = scanner.next();
-                    if (insuredPersonName.equals(claim.getInsuredPersonFullName())) {
-                        System.out.println("Banking Info for payment: " + claim.getBankingInfo());
-                        System.out.println("Proceed with payment? (true/false):");
-                        boolean proceed = scanner.nextBoolean();
+                if (claim.getId().equals(selectedClaimId)) {
+                    claimFound = true; // 청구를 찾았으므로 플래그를 true로 설정
+                    if ("Processing".equals(claim.getStatus())) {
+                        System.out.println("Enter the insured Person's Name");
+                        String insuredPersonName = scanner.next();
+                        if (insuredPersonName.equals(claim.getInsuredPersonFullName())) {
+                            System.out.println("Banking Info for payment: " + claim.getBankingInfo());
+                            System.out.println("Proceed with payment? (true/false):");
+                            boolean proceed = scanner.nextBoolean();
 
-                        if (proceed) {
-                            claim.setStatus("Done");
-                            String cardNumber = customer.getInsuranceCard().getCardNumber();
-                            String documentName = String.format("%s_%s_" + "Insurancepaymentstatement.pdf", claim.getId(), cardNumber);
-                            if (claim.getDocuments() == null) {
-                                claim.setDocuments(new ArrayList<>());
+                            if (proceed) {
+                                claim.setStatus("Done");
+                                String cardNumber = customer.getInsuranceCard().getCardNumber();
+                                String documentName = String.format("%s_%s_" + "Insurancepaymentstatement.pdf", claim.getId(), cardNumber);
+                                if (claim.getDocuments() == null) {
+                                    claim.setDocuments(new ArrayList<>());
+                                }
+                                claim.getDocuments().add(documentName);
+
+                                System.out.println("Payment has been processed successfully. Claim status updated to 'Done'.");
+                                serializeObject(claim, "claim/" + claim.getId() + ".txt"); // Reserialize and save changed Claim object list
+                                serializeObject(customer, "customer/" + customer.getId() + ".txt");
+                                return;
+                            } else {
+                                System.out.println("Payment cancelled.");
+                                return;
                             }
-                            claim.getDocuments().add(documentName);
-
-                            System.out.println("Payment has been processed successfully. Claim status updated to 'Done'.");
-                            serializeObject(claim, "claim/" + claim.getId() + ".txt"); // Reserialize and save changed Claim object list
-                            serializeObject(customer, "customer/" + customer.getId() + ".txt");
-                            return;
                         } else {
-                            System.out.println("Payment cancelled.");
+                            System.out.println("Wrong insured Person's Name! Please write his/her name to pay correctly.");
                             return;
                         }
                     }
-                    System.out.println("Wrong insured Person's Name! Please wrtie him/her name to pay correctly.");
                 }
-
-                System.out.println("Claim not found or already processed.");
             }
         }
+        if (!claimFound) {
+            System.out.println("Claim not found or already processed.");
         }
+    }
 
 }

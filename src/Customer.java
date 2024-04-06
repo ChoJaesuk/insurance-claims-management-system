@@ -182,21 +182,37 @@ public class Customer implements Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("ID: ").append(id).append("\n")
+        sb.append("Customer Information\n")
+                .append("====================\n")
+                .append("ID: ").append(id).append("\n")
                 .append("NAME: ").append(fullName).append("\n")
                 .append("Policy Holder: ").append(isPolicyHolder ? "Yes" : "No").append("\n")
-                .append("Policy Owner: ").append(policyOwner).append("\n");
+                .append("Policy Owner: ").append(policyOwner).append("\n\n");
 
-        // If customers have insurance card information
+        sb.append("Insurance Card\n")
+                .append("--------------\n");
         if (insuranceCard != null) {
             sb.append("InsuranceCard Number: ").append(insuranceCard.getCardNumber()).append("\n")
-                    .append("Expiration Date: ").append(insuranceCard.getExpirationDate()).append("\n");
+                    .append("Expiration Date: ").append(insuranceCard.getExpirationDate()).append("\n\n");
         } else {
-            sb.append("No InsuranceCard Data.\n");
+            sb.append("No InsuranceCard Data.\n\n");
         }
 
+        if (isPolicyHolder && dependents != null && !dependents.isEmpty()) {
+            sb.append("List of Dependents\n")
+                    .append("------------------\n");
+            for (Customer dependent : dependents) {
+                sb.append("\tID: ").append(dependent.getId()).append("\n")
+                        .append("\tDependent Full Name: ").append(dependent.getFullName()).append("\n")
+                        .append("\tInsuranceCard Number: ")
+                        .append(dependent.getInsuranceCard() != null ? dependent.getInsuranceCard().getCardNumber() : "No Data Available")
+                        .append("\n\n");
+            }
+        }
+
+        sb.append("Claims Information\n")
+                .append("------------------\n");
         if (claims != null && !claims.isEmpty()) {
-            sb.append("List of Claims:\n");
             for (Claim claim : claims) {
                 sb.append("\tClaim ID: ").append(claim.getId()).append("\n")
                         .append("\tClaim Date: ").append(claim.getClaimDate()).append("\n")
@@ -205,23 +221,11 @@ public class Customer implements Serializable {
                         .append("\tExam Date: ").append(claim.getExamDate()).append("\n")
                         .append("\tClaim Amount: ").append(claim.getClaimAmount()).append("\n")
                         .append("\tReceiver Banking Info: ").append(claim.getBankingInfo().toString()).append("\n")
-                        .append("\tStatus: ").append(claim.getStatus()).append("\n");
+                        .append("\tStatus: ").append(claim.getStatus()).append("\n\n");
             }
         } else {
-            sb.append("No Claim Data.\n");
+            sb.append("No Claim Data.\n\n");
         }
-
-        // Dependent information is output only when Policy Holder
-        if (isPolicyHolder && dependents != null && !dependents.isEmpty()) {
-            sb.append("List of Dependents:\n");
-            for (Customer dependent : dependents) {
-                sb.append("\tID: ").append(dependent.getId()).append("\n")
-                        .append("\tDependent Full Name: ").append(dependent.getFullName()).append("\n")
-                        // The dependent's insurance card number output
-                        .append("\tInsuranceCard Number: ").append(dependent.getInsuranceCard() != null ? dependent.getInsuranceCard().getCardNumber() : "정보 없음").append("\n\n");
-            }
-        }
-
 
         return sb.toString();
     }

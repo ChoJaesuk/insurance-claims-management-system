@@ -57,6 +57,7 @@ public class Claim implements Serializable {
         this.claimAmount = claimAmount;
         this.status = "New"; // status 초기화
         this.bankingInfo = bankingInfo;
+        this.documents = new ArrayList<>();
 
 
     }
@@ -166,17 +167,36 @@ public class Claim implements Serializable {
 
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder();
         String cardNumber = (insuranceCard != null) ? insuranceCard.getCardNumber() : "N/A";
-        return "Claim{" +
-                "CLAIM ID='" + id + '\'' +
-                "CUSTOMER ID='" + insuredPersonId + '\'' +
-                ", INSURED PERSON NAME='" + insuredPersonFullName + '\'' +
-                ", INSURANCE CARD NUMBER=" + cardNumber+
-                ", CLAIM DATE=" + claimDate +
-                ", EXAM DATE=" + examDate +
-                ", CLAIM AMOUNT=" + claimAmount +
-                ", STATUS=" + status + // 상태 정보 추가
-                '}';
+
+        // 기본 정보 섹션
+        sb.append("Claim Information\n")
+                .append("==================\n")
+                .append("CLAIM ID: ").append(id).append("\n")
+                .append("CUSTOMER ID: ").append(insuredPersonId).append("\n")
+                .append("INSURED PERSON NAME: ").append(insuredPersonFullName).append("\n")
+                .append("INSURANCE CARD NUMBER: ").append(cardNumber).append("\n");
+
+        // 날짜 정보 섹션
+        sb.append("\nDate Information\n")
+                .append("----------------\n")
+                .append("CLAIM DATE: ").append(claimDate).append("\n")
+                .append("EXAM DATE: ").append(examDate).append("\n");
+
+        // 금융 정보 섹션
+        sb.append("\nFinancial Information\n")
+                .append("---------------------\n")
+                .append("CLAIM AMOUNT: ").append(claimAmount).append("\n")
+                .append("STATUS: ").append(status).append("\n");
+
+        // 추가 섹션: 예를 들어, 수령인 은행 정보
+        sb.append("\nReceiver Banking Info\n")
+                .append("----------------------\n")
+                .append("BANKING INFO: ").append(getBankingInfo().toString()).append("\n");
+
+        return sb.toString();
     }
+
 }
 
