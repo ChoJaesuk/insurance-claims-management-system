@@ -500,52 +500,90 @@ public class CustomerManagerImpl implements CustomerManager {
 
 
     public void getAllCustomers() {
-        List<Customer> customers = deserializeCustomers(); // Bring up all customers in the system.
+        List<Customer> customers = deserializeCustomers();
 
         if (customers.isEmpty()) {
-            System.out.println("There is no Customers in our system.");
+            System.out.println("There are no Customers in our system.");
             return;
         }
 
+        // Extracted numeric parts from the ID and converted to integers, sorted by them
+        customers.sort(Comparator.comparingInt(customer -> Integer.parseInt(customer.getId().substring(2))));
+
         for (Customer customer : customers) {
-                System.out.println(customer.toString());
-                System.out.println("---------------------------------------");
+            System.out.println(customer.toString());
+            System.out.println("---------------------------------------");
         }
     }
-
-
-
-    @Override
     public void getAllDependents() {
         List<Customer> customers = deserializeCustomers();
 
         if (customers.isEmpty()) {
-            System.out.println("There is no Dependents in our system.");
+            System.out.println("There are no Dependents in our system.");
             return;
         }
 
-        System.out.println("Information for all dependents stored on the system : ");
+        // Collect all dependents into one list along with their policy holders' IDs
+        List<Customer> allDependents = new ArrayList<>();
+        Map<Customer, String> dependentPolicyHolderIds = new HashMap<>(); // Map to keep track of each dependent's policy holder ID
 
         for (Customer policyHolder : customers) {
-            // Output only if there is a dependent
             if (policyHolder.getDependents() != null && !policyHolder.getDependents().isEmpty()) {
                 for (Customer dependent : policyHolder.getDependents()) {
-                    System.out.println("Dependent ID: " + dependent.getId());
-                    System.out.println("Dependent Full Name: " + dependent.getFullName());
-                    System.out.println("Policy Holder ID: " + policyHolder.getId());
-                    System.out.println("Policy Owner: " + dependent.getPolicyOwner());
-                    if (dependent.getInsuranceCard() != null) {
-                        System.out.println("Expiration Date : " + dependent.getInsuranceCard().getExpirationDate());
-                        System.out.println("Insurance CardNumber: " + dependent.getInsuranceCard().getCardNumber());
-                        System.out.println("-------------------------------------------------------");
-                    } else {
-                        System.out.println("No Insurance CardNumber");
-                    }
+                    allDependents.add(dependent);
+                    dependentPolicyHolderIds.put(dependent, policyHolder.getId()); // Store the policy holder's ID for each dependent
                 }
-
             }
         }
+
+        // Sort dependents by ID
+        allDependents.sort(Comparator.comparingInt(dependent -> Integer.parseInt(dependent.getId().substring(2))));
+
+        // Sorted Dependents Output
+        for (Customer dependent : allDependents) {
+            System.out.println("Dependent ID: " + dependent.getId());
+            System.out.println("Dependent Full Name: " + dependent.getFullName());
+            System.out.println("Policy Holder ID: " + dependentPolicyHolderIds.get(dependent)); // Output the policy holder's ID
+            System.out.println("Policy Owner: " + dependent.getPolicyOwner());
+            System.out.println("Expiration Date: " + (dependent.getInsuranceCard() != null ? dependent.getInsuranceCard().getExpirationDate() : "No Data Available"));
+            System.out.println("Insurance Card Number: " + (dependent.getInsuranceCard() != null ? dependent.getInsuranceCard().getCardNumber() : "No Data Available"));
+            System.out.println("-------------------------------------------------------");
+        }
     }
+
+
+
+//    @Override
+//    public void getAllDependents() {
+//        List<Customer> customers = deserializeCustomers();
+//
+//        if (customers.isEmpty()) {
+//            System.out.println("There is no Dependents in our system.");
+//            return;
+//        }
+//
+//        System.out.println("Information for all dependents stored on the system : ");
+//
+//        for (Customer policyHolder : customers) {
+//            // Output only if there is a dependent
+//            if (policyHolder.getDependents() != null && !policyHolder.getDependents().isEmpty()) {
+//                for (Customer dependent : policyHolder.getDependents()) {
+//                    System.out.println("Dependent ID: " + dependent.getId());
+//                    System.out.println("Dependent Full Name: " + dependent.getFullName());
+//                    System.out.println("Policy Holder ID: " + policyHolder.getId());
+//                    System.out.println("Policy Owner: " + dependent.getPolicyOwner());
+//                    if (dependent.getInsuranceCard() != null) {
+//                        System.out.println("Expiration Date : " + dependent.getInsuranceCard().getExpirationDate());
+//                        System.out.println("Insurance CardNumber: " + dependent.getInsuranceCard().getCardNumber());
+//                        System.out.println("-------------------------------------------------------");
+//                    } else {
+//                        System.out.println("No Insurance CardNumber");
+//                    }
+//                }
+//
+//            }
+//        }
+//    }
 
 
     // This method outputs the customer's ID and name for a comfortable UI.
