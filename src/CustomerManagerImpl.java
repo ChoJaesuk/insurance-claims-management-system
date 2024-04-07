@@ -91,18 +91,6 @@ public class CustomerManagerImpl implements CustomerManager {
         System.out.println(dependentFullName + "has been successfully registered.");
     }
 
-    private Customer findCustomerById(String customerId) {
-        // This method uses deserializeCustomers to bring all customers,
-        // Finds and returns a Customer object that matches the given CustomerId.
-        List<Customer> customers = deserializeCustomers();
-        for (Customer customer : customers) {
-            if (customer.getId().equals(customerId)) {
-                return customer;
-            }
-        }
-        return null; // return null if not found
-    }
-
     @Override
     public void updateCustomer() {
         listCustomersWithoutDependents();
@@ -119,7 +107,7 @@ public class CustomerManagerImpl implements CustomerManager {
 
         System.out.println("Please choose an option to update");
         System.out.println("## [1] Customer's ID [2] Customer's Full Name [3] Customer's Expiration Date ##");
-        System.out.println("## [4] Add Dependent [5] Delete Dependent [6] Update Dependent(ID, FullName) [7] 취소 ##");
+        System.out.println("## [4] Add Dependent [5] Delete Dependent [6] Update Dependent(ID, FullName) [7] End the program ##");
         int choice = scan.nextInt();
         scan.nextLine(); // Remove remaining line change characters after entering numbers
 
@@ -168,9 +156,13 @@ public class CustomerManagerImpl implements CustomerManager {
             case 6:
                 updateDependentInfo(customerId);
                 break;
+
+            case 7:
+                System.out.println("End the program.");
+                System.exit(0);
+
             default:
                 System.out.println("Wrong Input!");
-                return;
 
         }
 
@@ -516,10 +508,8 @@ public class CustomerManagerImpl implements CustomerManager {
         }
 
         for (Customer customer : customers) {
-//            if(customer.getIsPolicyHolder() == true) {
                 System.out.println(customer.toString());
                 System.out.println("---------------------------------------");
-//            }
         }
     }
 
@@ -547,6 +537,7 @@ public class CustomerManagerImpl implements CustomerManager {
                     if (dependent.getInsuranceCard() != null) {
                         System.out.println("Expiration Date : " + dependent.getInsuranceCard().getExpirationDate());
                         System.out.println("Insurance CardNumber: " + dependent.getInsuranceCard().getCardNumber());
+                        System.out.println("-------------------------------------------------------");
                     } else {
                         System.out.println("No Insurance CardNumber");
                     }
@@ -575,6 +566,18 @@ public class CustomerManagerImpl implements CustomerManager {
                 System.out.println("Customer ID : " + customer.getId() + "\tCustomer Name : " + customer.getFullName());
             }
         }
+    }
+
+    private Customer findCustomerById(String customerId) {
+        // This method uses deserializeCustomers to bring all customers,
+        // Finds and returns a Customer object that matches the given CustomerId.
+        List<Customer> customers = deserializeCustomers();
+        for (Customer customer : customers) {
+            if (customer.getId().equals(customerId)) {
+                return customer;
+            }
+        }
+        return null; // return null if not found
     }
 
 }

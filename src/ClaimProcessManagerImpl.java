@@ -73,18 +73,6 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
         }
     }
 
-    public Customer findCustomerById(String customerId) {
-        List<Customer> customers = deserializeCustomers();
-
-        for (Customer customer : customers) {
-            if (customer.getId().equals(customerId)) {
-                return customer;
-            }
-        }
-
-        return null; // If you have not found a customer that corresponds to that customerId
-    }
-
     @Override
     public void update() {
         List<Claim> claims = deserializeClaims();
@@ -189,24 +177,6 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
 
 
 
-
-    private Customer findCustomerByClaimId(String claimId) {
-        File customerDir = new File("customer/");
-        File[] customerFiles = customerDir.listFiles();
-        if (customerFiles != null) {
-            for (File file : customerFiles) {
-                Customer customer = (Customer) deserializeObject(file.getPath());
-                for (Claim claim : customer.getClaims()) {
-                    if (claim.getId().equals(claimId)) {
-                        return customer;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-
     public void delete() {
         listClaims();
         Scanner scanner = new Scanner(System.in);
@@ -269,22 +239,10 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
     }
 
     @Override
-    public void getDocumentsList() {
-        List<Claim> claims = deserializeClaims();
-
-        for (Claim claim : claims) {
-            if (claim.getDocuments() != null && !claim.getDocuments().isEmpty()) { // 문서 목록이 null이 아니고, 비어 있지 않은 경우에만 출력
-                System.out.println(claim.getDocuments());
-            }
-
-        }
-    }
-
-    @Override
     public void getAllClaim() {
         List<Claim> claims = deserializeClaims();
         Scanner scan = new Scanner(System.in);
-        System.out.println("[1] All Claims [2] New Claims [3] Processing Claims [4] Done Claims [5] 취소");
+        System.out.println("[1] All Claims [2] New Claims [3] Processing Claims [4] Done Claims [5] End the program ");
         System.out.println("Input Option : ");
         int choice = scan.nextInt();
 
@@ -317,10 +275,16 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
                 findClaimWithStatus(claims, "Done");
                 break;
 
+            case 5:
+                System.out.println("End the program.");
+                System.exit(0);
+
             default:
-                break;
+                System.out.println("Wrong Input!");
+
         }
     }
+
 
     private void findClaimWithStatus(List<Claim> claims, String status) {
 
@@ -332,6 +296,19 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
         }
 
     }
+
+    @Override
+    public void getDocumentsList() {
+        List<Claim> claims = deserializeClaims();
+
+        for (Claim claim : claims) {
+            if (claim.getDocuments() != null && !claim.getDocuments().isEmpty()) {
+                System.out.println(claim.getDocuments());
+            }
+
+        }
+    }
+
     private Object deserializeObject(String filePath) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
             return ois.readObject();
@@ -400,5 +377,35 @@ public class ClaimProcessManagerImpl implements ClaimProcessManager {
                     claim.getId(), claim.getInsuredPersonFullName(), claim.getStatus());
         }
     }
+
+    public Customer findCustomerById(String customerId) {
+        List<Customer> customers = deserializeCustomers();
+
+        for (Customer customer : customers) {
+            if (customer.getId().equals(customerId)) {
+                return customer;
+            }
+        }
+
+
+        return null; // If you have not found a customer that corresponds to that customerId
+    }
+
+    private Customer findCustomerByClaimId(String claimId) {
+        File customerDir = new File("customer/");
+        File[] customerFiles = customerDir.listFiles();
+        if (customerFiles != null) {
+            for (File file : customerFiles) {
+                Customer customer = (Customer) deserializeObject(file.getPath());
+                for (Claim claim : customer.getClaims()) {
+                    if (claim.getId().equals(claimId)) {
+                        return customer;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
 
 }

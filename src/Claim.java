@@ -23,12 +23,6 @@ public class Claim implements Serializable {
 
 
     private ReceiverBankingInfo bankingInfo;
-    public Claim(String claimId, InsuranceCard cardNumber) {
-
-        this.id = claimId;
-        this.cardNumber = cardNumber;
-
-    }
 
 
     public String getPolicyHolderFullName() {
@@ -55,7 +49,7 @@ public class Claim implements Serializable {
         this.insuranceCard = cardNumber;
         this.examDate = examDate;
         this.claimAmount = claimAmount;
-        this.status = "New"; // status 초기화
+        this.status = "New"; // initialize status
         this.bankingInfo = bankingInfo;
         this.documents = new ArrayList<>();
 
@@ -108,14 +102,6 @@ public class Claim implements Serializable {
         this.claimAmount = claimAmount;
     }
 
-
-//    public String getStatus() {
-//        return status;
-//    }
-
-//    public void setStatus(String status) {
-//        this.status = status;
-//    }
 
     public LocalDate getClaimDate() {
         return claimDate;
@@ -170,7 +156,7 @@ public class Claim implements Serializable {
         StringBuilder sb = new StringBuilder();
         String cardNumber = (insuranceCard != null) ? insuranceCard.getCardNumber() : "N/A";
 
-        // 기본 정보 섹션
+        // Basic Information Section
         sb.append("Claim Information\n")
                 .append("==================\n")
                 .append("CLAIM ID: ").append(id).append("\n")
@@ -178,19 +164,19 @@ public class Claim implements Serializable {
                 .append("INSURED PERSON NAME: ").append(insuredPersonFullName).append("\n")
                 .append("INSURANCE CARD NUMBER: ").append(cardNumber).append("\n");
 
-        // 날짜 정보 섹션
+        // Date Information Section
         sb.append("\nDate Information\n")
                 .append("----------------\n")
                 .append("CLAIM DATE: ").append(claimDate).append("\n")
                 .append("EXAM DATE: ").append(examDate).append("\n");
 
-        // 금융 정보 섹션
+        // Financial Information Section
         sb.append("\nFinancial Information\n")
                 .append("---------------------\n")
                 .append("CLAIM AMOUNT: ").append(claimAmount).append("\n")
                 .append("STATUS: ").append(status).append("\n");
 
-        // 추가 섹션: 예를 들어, 수령인 은행 정보
+        // Additional section: For example, recipient bank information
         sb.append("\nReceiver Banking Info\n")
                 .append("----------------------\n")
                 .append("BANKING INFO: ").append(getBankingInfo().toString()).append("\n");

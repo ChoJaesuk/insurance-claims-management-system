@@ -37,11 +37,7 @@ public class InsuranceClaimManager {
                     break;
 
                 case 3:
-//                    service.getMenu();
-//                    break;
-
-                case 4:
-                    System.out.println("프로그램 종료합니다.");
+                    System.out.println("End the program.");
                     System.exit(0);    // 프로그램 강제종료
 
                 default:
@@ -59,7 +55,7 @@ public class InsuranceClaimManager {
             while (true) {
                 System.out.println();
                 System.out.println("###### Managing Customers ######");
-                System.out.println("## [1] Add Customer [2] Update Customer [3] Delete Customer ##");
+                System.out.println("## [1] Add Customer [2] Update Customer(Managing Dependent) [3] Delete Customer ##");
                 System.out.println("## [4] Search  A Customer By ID [5] Get All Customers  ##");
                 System.out.println("## [6] Get All Dependent [7] Back to the Main Menu [8] End the program ##");
 
@@ -98,10 +94,10 @@ public class InsuranceClaimManager {
 
                     case 8:
                         System.out.println("End the program.");
-                        System.exit(0);    // 프로그램 강제종료
+                        System.exit(0);
 
                     default:
-                        System.out.println("잘못입력 하셨습니다.");
+                        System.out.println("Wrong Input!");
 
             }
         }
