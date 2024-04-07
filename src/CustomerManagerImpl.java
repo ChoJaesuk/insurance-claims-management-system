@@ -138,8 +138,8 @@ public class CustomerManagerImpl implements CustomerManager {
                 if (customerToUpdate.getDependents() != null) {
                     for (Customer dependent : customerToUpdate.getDependents()) {
                         if(dependent.getInsuranceCard() != null) {
-                            dependent.getInsuranceCard().setExpirationDate(newExpirationDate); // 종속자의 보험 카드 만료 날짜 업데이트
-                            SerializationUtils.serialize(dependent, "customer/" + dependent.getId() + ".txt"); // 변경된 종속자 정보 직렬화
+                            dependent.getInsuranceCard().setExpirationDate(newExpirationDate); // Update dependents' insurance card expiration date
+                            SerializationUtils.serialize(dependent, "customer/" + dependent.getId() + ".txt"); // Serialize changed dependent information
                         }
                     }
                 }
@@ -560,7 +560,7 @@ public class CustomerManagerImpl implements CustomerManager {
     // This method outputs the customer's ID and name for a comfortable UI.
     public void listCustomersWithoutDependents() {
         List<Customer> customers = deserializeCustomers();
-        System.out.println("-------------- All Customers --------------");
+        System.out.println("-------------- All Customers(Policy Holder) --------------");
         for(Customer customer : customers) {
             if(customer.getIsPolicyHolder() == true) {
                 System.out.println("Customer ID : " + customer.getId() + "\tCustomer Name : " + customer.getFullName());
