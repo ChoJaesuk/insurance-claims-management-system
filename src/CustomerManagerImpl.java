@@ -27,7 +27,7 @@ public class CustomerManagerImpl implements CustomerManager {
         String dateInput = scan.next();
         LocalDate expirationDate = LocalDate.parse(dateInput);
 
-        System.out.println("is the customer Policy Holder? (Please input 'true'");
+        System.out.println("is the customer Policy Holder? (Please input 'true')");
         boolean answer = scan.nextBoolean();
 
         System.out.println("Enter customer's Policy owner (Don't use spaces.)");
