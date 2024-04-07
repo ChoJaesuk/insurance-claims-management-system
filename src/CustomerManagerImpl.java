@@ -20,17 +20,17 @@ public class CustomerManagerImpl implements CustomerManager {
 
         String id = idGenerator.generateCustomerId();
 
-        System.out.println("Enter the customer's Full Name");
+        System.out.println("Enter the customer's Full Name (Don't use spaces.)");
         String fullName = scan.next();
 
         System.out.println("Enter the Expiration Date (ex : 2024-12-31): ");
         String dateInput = scan.next();
         LocalDate expirationDate = LocalDate.parse(dateInput);
 
-        System.out.println("is the customer Policy Holder? (true)");
+        System.out.println("is the customer Policy Holder? (Please input 'true'");
         boolean answer = scan.nextBoolean();
 
-        System.out.println("Enter customer's Policy owner");
+        System.out.println("Enter customer's Policy owner (Don't use spaces.)");
         String policyOwner = scan.next();
 
         // Create an Insurance Card
@@ -67,7 +67,7 @@ public class CustomerManagerImpl implements CustomerManager {
         // Get Dependent information input
         String dependentId = idGenerator.generateCustomerId();
 
-        System.out.println("Enter the dependent's Full Name");
+        System.out.println("Enter the dependent's Full Name (Don't use spaces.)");
         String dependentFullName = scan.next();
 
         String cardNumber = insuranceCard2.generateRandomCardNumber(); // 보험 카드 번호 생성
@@ -125,7 +125,7 @@ public class CustomerManagerImpl implements CustomerManager {
                 }
                 break;
             case 2:
-                System.out.println("Enter a NEW Customer's Full Name. :");
+                System.out.println("Enter a NEW Customer's Full Name. (Don't use spaces.) :");
                 String newFullName = scan.next();
                 customerToUpdate.setFullName(newFullName);
                 customerUpdated = true;
@@ -219,13 +219,13 @@ public class CustomerManagerImpl implements CustomerManager {
             }
 
             System.out.println("Please choose an option to update:");
-            System.out.println(" [1] Dependent's Full Name");
+            System.out.println(" [1] Dependent's Full Name (Don't use spaces.)");
             int choice = scan.nextInt();
             scan.nextLine();
 
             switch (choice) {
                 case 1:
-                    System.out.println("Enter a new Dependent's Full Name: ");
+                    System.out.println("Enter a new Dependent's Full Name (Don't use spaces.) : ");
                     String newName = scan.nextLine();
                     dependentToUpdate.setFullName(newName);
 
@@ -490,7 +490,7 @@ public class CustomerManagerImpl implements CustomerManager {
         for(int i = 0; i < customers.size(); i++) {
             Customer customer = customers.get(i);
             if(customer.getId().equals(id)) {
-                System.out.println("The information of" + id);
+                System.out.println("The information of\t" + id);
                 System.out.println(customer.toString());
                 return;
             }
