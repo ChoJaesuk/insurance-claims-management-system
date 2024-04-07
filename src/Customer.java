@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.time.LocalDate;
 
-public class Customer implements Serializable {
+public class Customer implements Serializable, Comparable<Customer>{
     private static final long serialVersionUID = 1L;
     private String id;
     private String fullName;
@@ -229,5 +229,12 @@ public class Customer implements Serializable {
 
         return sb.toString();
     }
-
+    @Override
+    public int compareTo(Customer other) {
+        // Compare only the numeric part of the ID
+        return Integer.compare(
+                Integer.parseInt(this.id.substring(2)),
+                Integer.parseInt(other.id.substring(2))
+        );
+    }
 }
